@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>SettingsUi</RootNamespace>
         <LangVersion>latest</LangVersion>
         <TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
@@ -10,6 +9,9 @@
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor" Version="2.2.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+      <PackageReference Include="NJsonSchema" Version="10.5.2" />
     </ItemGroup>
 
 </Project>

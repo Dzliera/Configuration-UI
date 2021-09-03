@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace SettingsUi.Middlewares
+namespace ConfigurationUi.Middlewares
 {
     public class ConfigurationUiMiddleware : IMiddleware
     {

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
-using SettingsUi.Middlewares;
+﻿using ConfigurationUi.Middlewares;
+using Microsoft.AspNetCore.Builder;
 
-namespace SettingsUi.Extensions
+namespace ConfigurationUi.Extensions
 {
     public static class ApplicationBuilderExtensions
     {
