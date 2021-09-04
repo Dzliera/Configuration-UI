@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using ConfigurationUi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -34,6 +35,7 @@ namespace ConfigurationUi.Middlewares
             await context.Response.WriteAsync(page);
         }
         
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private string GenerateHtml(IConfiguration configuration, JsonSchema schema)
         {
             throw new System.NotImplementedException();

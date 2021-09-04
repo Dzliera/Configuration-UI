@@ -5,9 +5,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace ConfigurationUi.Extensions
 {
-    public static class ConfigurationBuilderExtensions
+    public static class HostBuilderExtensions
     {
-        public static void AddConfigurationUi<TConfigModel>(this IHostBuilder hostBuilder, string filePath)
+        public static IHostBuilder AddConfigurationUi<TConfigModel>(this IHostBuilder hostBuilder, string filePath)
         {
             var optionsBuilder = new ConfigurationUiOptionsBuilder();
             optionsBuilder.UseJsonFileStorage(filePath).WithSchemeFromType<TConfigModel>();
@@ -21,6 +21,8 @@ namespace ConfigurationUi.Extensions
             {
                 services.AddSingleton(optionsBuilder.Options.Context);
             });
+
+            return hostBuilder;
         }
     }
 }
