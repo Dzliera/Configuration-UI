@@ -3,9 +3,11 @@ using NJsonSchema;
 
 namespace ConfigurationUi.Models
 {
-    internal class ConfigurationContext
+    internal class ConfigurationUiOptions
     {
         public IConfigurationStorage Storage { get; set; }
-        public JsonSchema Scheme { get; set; }
+        public JsonSchema Schema { get; set; }
+        
+        public string WebUiPath { get; set; }
     }
 }
