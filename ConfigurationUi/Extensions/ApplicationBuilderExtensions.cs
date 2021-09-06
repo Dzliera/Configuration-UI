@@ -1,5 +1,5 @@
 ﻿using ConfigurationUi.Middlewares;
-using ConfigurationUi.Models;
+using ConfigurationUi.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 

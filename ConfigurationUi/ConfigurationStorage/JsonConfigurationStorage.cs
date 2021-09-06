@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using ConfigurationUi.Abstractions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
@@ -15,10 +16,21 @@ namespace ConfigurationUi.ConfigurationStorage
         private readonly string _filePath;
         private IConfiguration _configuration;
 
-        public JsonConfigurationStorage(string filePath)
+        public JsonConfigurationStorage(string filePath, IFileProvider fileProvider)
         {
             _filePath = filePath;
-            _configuration = new ConfigurationBuilder().AddJsonFile(_filePath).Build();
+            
+            var fileInfo = fileProvider.GetFileInfo(_filePath);
+            if (!fileInfo.Exists)
+            {
+                var streamWriter = File.CreateText(fileInfo.PhysicalPath);
+                streamWriter.WriteLine("{}"); // write empty json object initially
+                streamWriter.Flush();
+                streamWriter.Close();
+            }
+            var configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.SetFileProvider(fileProvider);
+            _configuration = configurationBuilder.AddJsonFile(_filePath).Build();
         }
 
         public Task<IConfiguration> ReadConfigurationAsync()

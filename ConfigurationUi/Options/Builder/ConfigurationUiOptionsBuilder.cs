@@ -1,4 +1,5 @@
 ﻿using ConfigurationUi.ConfigurationStorage;
+using Microsoft.Extensions.FileProviders;
 using NJsonSchema;
 
 namespace ConfigurationUi.Options.Builder
@@ -7,15 +8,15 @@ namespace ConfigurationUi.Options.Builder
     {
         internal ConfigurationUiOptions Options { get; } = new ConfigurationUiOptions();
 
-        public IConfigurationUiStorageOptionsBuilder UseJsonFileStorage(string filePath)
+        public IConfigurationUiStorageOptionsBuilder UseJsonFileStorage(string filePath, IFileProvider fileProvider)
         {
-            Options.Context.Storage = new JsonConfigurationStorage(filePath);
+            Options.Storage = new JsonConfigurationStorage(filePath, fileProvider);
             return this;
         }
         
         void IConfigurationUiStorageOptionsBuilder.WithSchemeFromType<T>()
         {
-            Options.Context.Schema = JsonSchema.FromType<T>();
+            Options.Schema = JsonSchema.FromType<T>();
         }
     }
 }

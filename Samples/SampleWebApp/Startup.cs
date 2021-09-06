@@ -1,3 +1,4 @@
+using ConfigurationUi.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -35,7 +36,9 @@ namespace SampleWebApp
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SampleWebApp v1"));
             }
-
+            
+            app.UseConfigurationUi("/configuration");
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();

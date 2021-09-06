@@ -15,4 +15,10 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="NJsonSchema" Version="10.5.2" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <Content Include="Ui/**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 </Project>
