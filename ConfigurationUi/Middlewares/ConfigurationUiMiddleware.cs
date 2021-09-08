@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,33 +15,41 @@ namespace ConfigurationUi.Middlewares
 {
     internal class ConfigurationUiMiddleware : IMiddleware
     {
-        private const string ComponentBasePath = "Ui/Html/Components";
-        private const string RootTemplatePath = "Ui/Html/ConfigurationUi.html";
-        
+        private const string TemplatesFolderPath = "Ui/Html";
+        private const string RootTemplateName = "ConfigurationUi.html";
+        private const string ComponentsFolderName = "Components";
+
+        private readonly string _assemblyBasePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
         private readonly ConfigurationUiOptions _configurationUiOptions;
-        
-        private readonly string _rootUiHtml;
-        private readonly string _numericEditorHtmlComponent;
-        private readonly string _textEditorHtmlComponent;
-        private readonly string _booleanEditorHtmlComponent;
-        private readonly string _objectEditorHtmlComponent;
-        
+
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly FileSystemWatcher _templateChangeWatcher;
+
+        private string _rootUiHtml;
+        private string _numericEditorHtmlComponent;
+        private string _textEditorHtmlComponent;
+        private string _booleanEditorHtmlComponent;
+        private string _objectEditorHtmlComponent;
+
 
         public ConfigurationUiMiddleware(ConfigurationUiOptions configurationUiOptions)
         {
             _configurationUiOptions = configurationUiOptions;
-
-            _rootUiHtml = ReadRootTemplate();
-            
-            _numericEditorHtmlComponent = ReadComponentTemplate("NumericEditor");
-            _textEditorHtmlComponent = ReadComponentTemplate("TextEditor");
-            _booleanEditorHtmlComponent = ReadComponentTemplate("BooleanEditor");
-            _objectEditorHtmlComponent = ReadComponentTemplate("ObjectEditor");
+            _templateChangeWatcher = new FileSystemWatcher(Path.Combine(_assemblyBasePath, TemplatesFolderPath))
+            {
+                NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite
+            };
+            _templateChangeWatcher.Changed += (_, _) => InitializeTemplates();
+            _templateChangeWatcher.Created += (_, _) => InitializeTemplates();
+            _templateChangeWatcher.IncludeSubdirectories = true;
+            _templateChangeWatcher.EnableRaisingEvents = true;
+            _templateChangeWatcher.Filter = "*";
+            InitializeTemplates();
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            
             var requestPath = context.Request.Path;
             if (requestPath != _configurationUiOptions.WebUiPath)
             {
@@ -56,7 +65,7 @@ namespace ConfigurationUi.Middlewares
             context.Response.ContentType = "text/html";
             await context.Response.WriteAsync(page);
         }
-        
+
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private string GenerateHtml(IConfiguration configuration, JsonSchema schema)
         {
@@ -66,7 +75,7 @@ namespace ConfigurationUi.Middlewares
 
             var propertiesBuilder = GeneratePropertiesHtmlRecursive(configuration, schema);
 
-            htmlBuilder.Replace("{cfgProperties}", propertiesBuilder.ToString());
+            htmlBuilder.Replace("{CfgProperties}", propertiesBuilder.ToString());
 
             return htmlBuilder.ToString();
         }
@@ -83,14 +92,35 @@ namespace ConfigurationUi.Middlewares
 
             if (schema.IsObject) return BuildObjectEditor(configuration, schema);
 
+            if (schema.Type == JsonObjectType.None)
+            {
+                if (schema.OneOf.Count == 2 && schema.OneOf.First().Type == JsonObjectType.Null)
+                    return GenerateHtmlRecursive(configuration, schema.OneOf.Last());
+
+                if (schema.HasReference) return GenerateHtmlRecursive(configuration, schema.Reference);
+            }
+
             // TODO support arrays
+            // TODO support enums
+            // TODO support Dictionaries
             throw new NotSupportedException();
+        }
+
+        private void InitializeTemplates()
+        {
+            _rootUiHtml = ReadRootTemplate();
+
+            _numericEditorHtmlComponent = ReadComponentTemplate("NumericEditor");
+            _textEditorHtmlComponent = ReadComponentTemplate("TextEditor");
+            _booleanEditorHtmlComponent = ReadComponentTemplate("BooleanEditor");
+            _objectEditorHtmlComponent = ReadComponentTemplate("ObjectEditor");
         }
 
         private StringBuilder BuildObjectEditor(IConfigurationSection configuration, JsonSchema schema)
         {
-            var objectBuilder =  new StringBuilder(_objectEditorHtmlComponent)
-                .Replace("{PropertyName}", configuration.Key);
+            var objectBuilder = new StringBuilder(_objectEditorHtmlComponent)
+                .Replace("{PropertyName}", configuration.Key)
+                .Replace("{PropertyId}", configuration.Path);
 
             var propertiesBuilder = GeneratePropertiesHtmlRecursive(configuration, schema);
             objectBuilder.Replace("{Properties}", propertiesBuilder.ToString());
@@ -102,17 +132,16 @@ namespace ConfigurationUi.Middlewares
         {
             return FormatComponent(configuration, _textEditorHtmlComponent);
         }
-        
+
         private StringBuilder BuildBooleanEditor(IConfigurationSection configuration)
         {
             return FormatComponent(configuration, _booleanEditorHtmlComponent);
         }
-        
+
         private StringBuilder BuildNumberEditor(IConfigurationSection configuration)
         {
             return FormatComponent(configuration, _numericEditorHtmlComponent);
         }
-
 
 
         private StringBuilder FormatComponent(IConfigurationSection configuration, string template)
@@ -122,8 +151,8 @@ namespace ConfigurationUi.Middlewares
                 .Replace("{PropertyId}", configuration.Path)
                 .Replace("{Value}", configuration.Value);
         }
-        
-        
+
+
         private StringBuilder GeneratePropertiesHtmlRecursive(IConfiguration configuration, JsonSchema schema)
         {
             var propertiesBuilder = new StringBuilder();
@@ -140,15 +169,13 @@ namespace ConfigurationUi.Middlewares
 
         private string ReadComponentTemplate(string componentName)
         {
-            
-            var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return File.ReadAllText(Path.Combine(basePath!, ComponentBasePath, $"{componentName}.html"));
+            return File.ReadAllText(Path.Combine(_assemblyBasePath, TemplatesFolderPath, ComponentsFolderName,
+                $"{componentName}.html"));
         }
 
         private string ReadRootTemplate()
         {
-            var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return File.ReadAllText(Path.Combine(basePath!, RootTemplatePath));
+            return File.ReadAllText(Path.Combine(_assemblyBasePath, TemplatesFolderPath, RootTemplateName));
         }
     }
 }
