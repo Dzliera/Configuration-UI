@@ -17,6 +17,10 @@
             margin: auto;
             padding: 10px
         }
+
+        .collapsible-body{
+            padding: 1rem !important;
+        }
     </style>
 </head>
 <body>
@@ -36,6 +40,10 @@
         const elems = document.querySelector('.collapsible');
         const instances = M.Collapsible.init(elems);
         instances.open();
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const elems = document.querySelectorAll('select');
+        M.FormSelect.init(elems);
     });
 </script>
 </body>

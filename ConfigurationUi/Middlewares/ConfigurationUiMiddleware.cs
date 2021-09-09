@@ -32,6 +32,9 @@ namespace ConfigurationUi.Middlewares
         private string _booleanEditorHtmlComponent;
         private string _objectEditorHtmlComponent;
 
+        private string _dropDownEditorComponent;
+        private string _dropDownEditorOptionsTemplate;
+
 
         public ConfigurationUiMiddleware(ConfigurationUiOptions configurationUiOptions)
         {
@@ -82,6 +85,11 @@ namespace ConfigurationUi.Middlewares
 
         private StringBuilder GenerateHtmlRecursive(IConfigurationSection configuration, JsonSchema schema)
         {
+            if (schema.IsEnumeration)
+            {
+                return BuildDropDownEditorHtml(configuration, schema);
+            }
+
             if (schema.Type.HasFlag(JsonObjectType.String))
                 return BuildTextEditorHtml(configuration);
             if (schema.Type.HasFlag(JsonObjectType.Boolean))
@@ -89,6 +97,7 @@ namespace ConfigurationUi.Middlewares
             if (schema.Type.HasFlag(JsonObjectType.Number))
                 return BuildNumberEditor(configuration);
             if (schema.Type.HasFlag(JsonObjectType.Integer)) return BuildNumberEditor(configuration);
+
 
             if (schema.IsObject) return BuildObjectEditor(configuration, schema);
 
@@ -101,9 +110,32 @@ namespace ConfigurationUi.Middlewares
             }
 
             // TODO support arrays
-            // TODO support enums
             // TODO support Dictionaries
             throw new NotSupportedException();
+        }
+
+        private StringBuilder BuildDropDownEditorHtml(IConfigurationSection configuration, JsonSchema schema)
+        {
+            
+            // TODO support flags enum
+            
+            var dropDownEditorBuilder = new StringBuilder(_dropDownEditorComponent)
+                .Replace("{PropertyName}", configuration.Key)
+                .Replace("{PropertyId}", configuration.Path);
+
+            var optionsBuilder = new StringBuilder();
+            var options = schema.EnumerationNames.Zip(schema.Enumeration, (s, o) => (name: s, value: o));
+            
+            foreach (var (name, value) in options)
+            {
+                 optionsBuilder.Append(new StringBuilder(_dropDownEditorOptionsTemplate)
+                    .Replace("{Value}", value.ToString())
+                    .Replace("{Name}", name));
+            }
+
+            dropDownEditorBuilder.Replace("{Options}", optionsBuilder.ToString());
+
+            return dropDownEditorBuilder;
         }
 
         private void InitializeTemplates()
@@ -114,6 +146,9 @@ namespace ConfigurationUi.Middlewares
             _textEditorHtmlComponent = ReadComponentTemplate("TextEditor");
             _booleanEditorHtmlComponent = ReadComponentTemplate("BooleanEditor");
             _objectEditorHtmlComponent = ReadComponentTemplate("ObjectEditor");
+
+            _dropDownEditorComponent = ReadComponentTemplate("DropDownEditor");
+            _dropDownEditorOptionsTemplate = ReadComponentTemplate("DropDownEditor", "DropDownOption");
         }
 
         private StringBuilder BuildObjectEditor(IConfigurationSection configuration, JsonSchema schema)
@@ -167,10 +202,13 @@ namespace ConfigurationUi.Middlewares
         }
 
 
-        private string ReadComponentTemplate(string componentName)
+        private string ReadComponentTemplate(string componentName, string templateFileName = null)
         {
+            templateFileName ??= componentName;
+
             return File.ReadAllText(Path.Combine(_assemblyBasePath, TemplatesFolderPath, ComponentsFolderName,
-                $"{componentName}.html"));
+                componentName,
+                $"{templateFileName}.html"));
         }
 
         private string ReadRootTemplate()

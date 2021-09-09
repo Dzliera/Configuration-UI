@@ -15,7 +15,10 @@ namespace SampleWebApp
     public class SettingSubSection
     {
         public string StringSetting { get; set; }
-        public int IntegerSetting { get; set; }
+        public MyEnum EnumSetting { get; set; }
         public bool BooleanSetting { get; set; }
     }
+
+    [Serializable]
+    public enum MyEnum { FirstValue, SecondValue }
 }
