@@ -155,7 +155,7 @@ namespace ConfigurationUi.Middlewares
             _dropDownEditorOptionsTemplate = ReadComponentTemplate("DropDownEditor", "DropDownOption");
 
             _arrayEditorComponent = ReadComponentTemplate("ArrayEditor");
-            _arrayElementTemplate = ReadComponentTemplate("ArrayEditor", "ElementTemplate");
+            _arrayElementTemplate = ReadComponentTemplate("ArrayEditor", "ArrayElement");
         }
 
         private StringBuilder BuildObjectEditorHtml(IConfigurationSection configuration, JsonSchema schema)
