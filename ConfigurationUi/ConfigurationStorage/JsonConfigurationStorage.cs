@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using ConfigurationUi.Abstractions;
 using Microsoft.Extensions.Configuration;
@@ -82,14 +83,19 @@ namespace ConfigurationUi.ConfigurationStorage
             
             if (value == null) return JValue.CreateNull();
 
-            return schema.Type switch
-            {
-                JsonObjectType.String => new JValue(value),
-                JsonObjectType.Boolean => new JValue(bool.Parse(value)),
-                JsonObjectType.Integer => new JValue(long.Parse(value)),
-                JsonObjectType.Number => new JValue(decimal.Parse(value)),
-                _ => throw new NotSupportedException($"unsupported json token type {schema.Type}")
-            };
+            if (schema.Type.HasFlag(JsonObjectType.String))
+                return new JValue(value);
+            if (schema.Type.HasFlag(JsonObjectType.Boolean))
+                return new JValue(bool.Parse(value));
+            if (schema.Type.HasFlag(JsonObjectType.Integer))
+                return new JValue(long.Parse(value));
+            if (schema.Type.HasFlag(JsonObjectType.Number))
+                return new JValue(decimal.Parse(value));
+            if (schema.HasReference) return GetJTokenFromConfiguration(configuration, schema.Reference);
+            
+            if (schema.OneOf.Count == 2 && schema.OneOf.First().Type == JsonObjectType.Null)
+                return GetJTokenFromConfiguration(configuration, schema.OneOf.Last());
+            throw new NotSupportedException($"unsupported json token type {schema.Type}");
         }
 
     }

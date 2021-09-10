@@ -63,6 +63,18 @@ namespace ConfigurationUi.Middlewares
                 return;
             }
 
+            if (context.Request.Method == HttpMethods.Post)
+            {
+                var form = context.Request.Form;
+                var oldConfiguration = await _configurationUiOptions.Storage.ReadConfigurationAsync();
+                foreach (var (key, value) in form.Where(kv => kv.Key != "action"))
+                {
+                    oldConfiguration[key] = value;
+                }
+
+                await _configurationUiOptions.Storage.WriteConfigurationAsync(oldConfiguration, _configurationUiOptions.Schema);
+            }
+
             var configuration = await _configurationUiOptions.Storage.ReadConfigurationAsync();
             var schema = _configurationUiOptions.Schema;
 

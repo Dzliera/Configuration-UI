@@ -24,7 +24,7 @@
     </style>
 </head>
 <body>
-<form class="MainForm">
+<form class="MainForm" method="post">
     <h3 style="margin: auto; text-align: center; width: max-content">Configuration Editor</h3>
     {CfgProperties}
     <div style="width: 100%; display: flex; justify-content: end">
@@ -45,5 +45,20 @@
         const elems = document.querySelectorAll('select');
         M.FormSelect.init(elems);
     });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $("input[type='checkbox']").click(checkboxClick)
+    });
+    
+    
+    function checkboxClick(cb)
+    {
+        if (cb.checked) {
+            cb.target.value = true;
+            return;
+        }
+
+        cb.target.value = false;
+    }
 </script>
 </body>
