@@ -35,6 +35,9 @@ namespace ConfigurationUi.Middlewares
         private string _dropDownEditorComponent;
         private string _dropDownEditorOptionsTemplate;
 
+        private string _arrayEditorComponent;
+        private string _arrayElementTemplate;
+
 
         public ConfigurationUiMiddleware(ConfigurationUiOptions configurationUiOptions)
         {
@@ -95,12 +98,14 @@ namespace ConfigurationUi.Middlewares
             if (schema.Type.HasFlag(JsonObjectType.Boolean))
                 return BuildBooleanEditor(configuration);
             if (schema.Type.HasFlag(JsonObjectType.Number))
-                return BuildNumberEditor(configuration);
-            if (schema.Type.HasFlag(JsonObjectType.Integer)) return BuildNumberEditor(configuration);
+                return BuildNumberEditorHtml(configuration);
+            if (schema.Type.HasFlag(JsonObjectType.Integer)) return BuildNumberEditorHtml(configuration);
 
 
-            if (schema.IsObject) return BuildObjectEditor(configuration, schema);
+            if (schema.IsObject) return BuildObjectEditorHtml(configuration, schema);
 
+            if (schema.IsArray) return BuildArrayEditorHtml(configuration, schema);
+            
             if (schema.Type == JsonObjectType.None)
             {
                 if (schema.OneOf.Count == 2 && schema.OneOf.First().Type == JsonObjectType.Null)
@@ -108,8 +113,7 @@ namespace ConfigurationUi.Middlewares
 
                 if (schema.HasReference) return GenerateHtmlRecursive(configuration, schema.Reference);
             }
-
-            // TODO support arrays
+            
             // TODO support Dictionaries
             throw new NotSupportedException();
         }
@@ -149,9 +153,12 @@ namespace ConfigurationUi.Middlewares
 
             _dropDownEditorComponent = ReadComponentTemplate("DropDownEditor");
             _dropDownEditorOptionsTemplate = ReadComponentTemplate("DropDownEditor", "DropDownOption");
+
+            _arrayEditorComponent = ReadComponentTemplate("ArrayEditor");
+            _arrayElementTemplate = ReadComponentTemplate("ArrayEditor", "ElementTemplate");
         }
 
-        private StringBuilder BuildObjectEditor(IConfigurationSection configuration, JsonSchema schema)
+        private StringBuilder BuildObjectEditorHtml(IConfigurationSection configuration, JsonSchema schema)
         {
             var objectBuilder = new StringBuilder(_objectEditorHtmlComponent)
                 .Replace("{PropertyName}", configuration.Key)
@@ -161,6 +168,27 @@ namespace ConfigurationUi.Middlewares
             objectBuilder.Replace("{Properties}", propertiesBuilder.ToString());
 
             return objectBuilder;
+        }
+
+        private StringBuilder BuildArrayEditorHtml(IConfigurationSection configuration, JsonSchema schema)
+        {
+            var arrayBuilder = new StringBuilder(_arrayEditorComponent).Replace("{PropertyName}", configuration.Key);
+
+            var elemSchema = schema.Item; // TODO support mixed schema arrays
+
+            var elemsBuilder = new StringBuilder();
+            
+            foreach (var arrayElemSection in configuration.GetChildren())
+            {
+                var singleElementBuilder = new StringBuilder(_arrayElementTemplate);
+                var elemHtml = GenerateHtmlRecursive(arrayElemSection, elemSchema);
+                singleElementBuilder.Replace("{Element}", elemHtml.ToString());
+                elemsBuilder.Append(singleElementBuilder);
+            }
+
+            arrayBuilder.Replace("{Elements}", elemsBuilder.ToString());
+
+            return arrayBuilder;
         }
 
         private StringBuilder BuildTextEditorHtml(IConfigurationSection configuration)
@@ -173,11 +201,11 @@ namespace ConfigurationUi.Middlewares
             return FormatComponent(configuration, _booleanEditorHtmlComponent);
         }
 
-        private StringBuilder BuildNumberEditor(IConfigurationSection configuration)
+        private StringBuilder BuildNumberEditorHtml(IConfigurationSection configuration)
         {
             return FormatComponent(configuration, _numericEditorHtmlComponent);
         }
-
+        
 
         private StringBuilder FormatComponent(IConfigurationSection configuration, string template)
         {
