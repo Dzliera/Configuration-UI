@@ -1,4 +1,4 @@
-﻿using ConfigurationUi.ConfigurationStorage;
+﻿using ConfigurationUi.StorageProviders;
 using Microsoft.Extensions.FileProviders;
 using NJsonSchema;
 

@@ -7,24 +7,17 @@
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-    <script type="text/javascript"
-            src="https://code.jquery.com/jquery-2.1.1.min.js">
-    </script>
+    {Styles}
     <style>
-        .MainForm{
+        .mainForm{
             width: min-content;
             margin: auto;
             padding: 10px
         }
-
-        .collapsible-body{
-            padding: 1rem !important;
-        }
     </style>
 </head>
 <body>
-<form class="MainForm" method="post">
+<form class="mainForm" method="post">
     <h3 style="margin: auto; text-align: center; width: max-content">Configuration Editor</h3>
     {CfgProperties}
     <div style="width: 100%; display: flex; justify-content: end">
@@ -33,32 +26,9 @@
         </button>
     </div>
 </form>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js">
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js">
 </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const elems = document.querySelector('.collapsible');
-        const instances = M.Collapsible.init(elems);
-        instances.open();
-    });
-    document.addEventListener('DOMContentLoaded', function () {
-        const elems = document.querySelectorAll('select');
-        M.FormSelect.init(elems);
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        $("input[type='checkbox']").click(checkboxClick)
-    });
-    
-    
-    function checkboxClick(cb)
-    {
-        if (cb.checked) {
-            cb.target.value = true;
-            return;
-        }
-
-        cb.target.value = false;
-    }
-</script>
+{Scripts}
 </body>

@@ -219,7 +219,7 @@ namespace ConfigurationUi.Middlewares
         }
         
 
-        private StringBuilder FormatComponent(IConfigurationSection configuration, string template)
+        private static StringBuilder FormatComponent(IConfigurationSection configuration, string template)
         {
             return new StringBuilder(template)
                 .Replace("{PropertyName}", configuration.Key)
@@ -253,7 +253,26 @@ namespace ConfigurationUi.Middlewares
 
         private string ReadRootTemplate()
         {
-            return File.ReadAllText(Path.Combine(_assemblyBasePath, TemplatesFolderPath, RootTemplateName));
+            var templatesFolder = Path.Combine(_assemblyBasePath, TemplatesFolderPath);
+            var rootTemplatePath = Path.Combine(templatesFolder, RootTemplateName);
+            var rootHtmlBuilder = new StringBuilder(File.ReadAllText(rootTemplatePath));
+            
+            var scriptsBuilder = new StringBuilder();
+            foreach (var filePath in Directory.GetFiles(templatesFolder, "*.Scripts.html", SearchOption.AllDirectories))
+            {
+                scriptsBuilder.Append(File.ReadAllText(filePath));
+            }
+
+            var stylesBuilder = new StringBuilder();
+            foreach (var filePath in Directory.GetFiles(templatesFolder, "*Styles.html", SearchOption.AllDirectories))
+            {
+                stylesBuilder.Append(File.ReadAllText(filePath));
+            }
+
+            rootHtmlBuilder.Replace("{Scripts}", scriptsBuilder.ToString())
+                .Replace("{Styles}", stylesBuilder.ToString());
+
+            return rootHtmlBuilder.ToString();
         }
     }
 }

@@ -1,0 +1,15 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        $("input[type='checkbox']").click(checkboxClick)
+    });
+
+
+    function checkboxClick(cb) {
+        if (cb.checked) {
+            cb.target.value = true;
+            return;
+        }
+
+        cb.target.value = false;
+    }
+</script>

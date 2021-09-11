@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
 
-namespace ConfigurationUi.ConfigurationStorage
+namespace ConfigurationUi.StorageProviders
 {
     internal class JsonConfigurationStorage : IConfigurationStorage
     {
