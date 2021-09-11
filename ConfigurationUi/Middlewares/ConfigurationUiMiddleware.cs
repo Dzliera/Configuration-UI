@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -66,13 +67,13 @@ namespace ConfigurationUi.Middlewares
             if (context.Request.Method == HttpMethods.Post)
             {
                 var form = context.Request.Form;
-                var oldConfiguration = await _configurationUiOptions.Storage.ReadConfigurationAsync();
+                var newConfiguration = new ConfigurationBuilder().AddInMemoryCollection().Build();
                 foreach (var (key, value) in form.Where(kv => kv.Key != "action"))
                 {
-                    oldConfiguration[key] = value;
+                    newConfiguration[key] = value;
                 }
 
-                await _configurationUiOptions.Storage.WriteConfigurationAsync(oldConfiguration, _configurationUiOptions.Schema);
+                await _configurationUiOptions.Storage.WriteConfigurationAsync(newConfiguration, _configurationUiOptions.Schema);
             }
 
             var configuration = await _configurationUiOptions.Storage.ReadConfigurationAsync();
@@ -194,11 +195,11 @@ namespace ConfigurationUi.Middlewares
             {
                 var singleElementBuilder = new StringBuilder(_arrayElementTemplate);
                 var elemHtml = GenerateHtmlRecursive(arrayElemSection, elemSchema);
-                singleElementBuilder.Replace("{Element}", elemHtml.ToString());
+                singleElementBuilder.Replace("{Item}", elemHtml.ToString());
                 elemsBuilder.Append(singleElementBuilder);
             }
 
-            arrayBuilder.Replace("{Elements}", elemsBuilder.ToString());
+            arrayBuilder.Replace("{Items}", elemsBuilder.ToString());
 
             return arrayBuilder;
         }
@@ -264,7 +265,7 @@ namespace ConfigurationUi.Middlewares
             }
 
             var stylesBuilder = new StringBuilder();
-            foreach (var filePath in Directory.GetFiles(templatesFolder, "*Styles.html", SearchOption.AllDirectories))
+            foreach (var filePath in Directory.GetFiles(templatesFolder, "*.Styles.html", SearchOption.AllDirectories))
             {
                 stylesBuilder.Append(File.ReadAllText(filePath));
             }
