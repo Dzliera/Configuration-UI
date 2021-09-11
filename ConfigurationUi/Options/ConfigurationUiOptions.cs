@@ -5,7 +5,7 @@ namespace ConfigurationUi.Options
 {
     internal class ConfigurationUiOptions
     {
-        public IConfigurationStorage Storage { get; set; }
+        public IConfigurationStorageProvider StorageProvider { get; set; }
         public JsonSchema Schema { get; set; }
         
         public string WebUiPath { get; set; }

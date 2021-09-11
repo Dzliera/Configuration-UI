@@ -12,12 +12,12 @@ using NJsonSchema;
 
 namespace ConfigurationUi.StorageProviders
 {
-    internal class JsonConfigurationStorage : IConfigurationStorage
+    internal class JsonStorageProvider : IConfigurationStorageProvider
     {
         private readonly string _filePath;
         private IConfiguration _configuration;
 
-        public JsonConfigurationStorage(string filePath, IFileProvider fileProvider)
+        public JsonStorageProvider(string filePath, IFileProvider fileProvider)
         {
             _filePath = filePath;
             

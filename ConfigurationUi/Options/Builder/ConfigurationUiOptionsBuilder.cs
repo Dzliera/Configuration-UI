@@ -10,7 +10,7 @@ namespace ConfigurationUi.Options.Builder
 
         public IConfigurationUiStorageOptionsBuilder UseJsonFileStorage(string filePath, IFileProvider fileProvider)
         {
-            Options.Storage = new JsonConfigurationStorage(filePath, fileProvider);
+            Options.StorageProvider = new JsonStorageProvider(filePath, fileProvider);
             return this;
         }
         

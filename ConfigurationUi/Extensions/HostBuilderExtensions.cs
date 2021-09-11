@@ -1,5 +1,7 @@
-﻿using ConfigurationUi.Middlewares;
+﻿using ConfigurationUi.Abstractions;
+using ConfigurationUi.Middlewares;
 using ConfigurationUi.Options.Builder;
+using ConfigurationUi.Ui;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +26,7 @@ namespace ConfigurationUi.Extensions
             hostBuilder.ConfigureServices((_, services) =>
             {
                 services.AddSingleton(optionsBuilder.Options);
+                services.AddSingleton<IEditorUiBuilder, UiBuilder>();
                 services.AddSingleton<ConfigurationUiMiddleware>();
             });
 
