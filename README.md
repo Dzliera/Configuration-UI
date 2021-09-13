@@ -42,7 +42,7 @@ Using ConfigurationUI is very simple, it is done in 4 steps:
               .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
   }
   ```
-- Modify `Startup.Configure` Method and add configuration middleware:
+- Modify `Startup.Configure` Method and add configuration middleware with `app.UseConfigurationUi("/configuration")`:
   ```csharp
   public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
   {
@@ -51,7 +51,7 @@ Using ConfigurationUI is very simple, it is done in 4 steps:
           app.UseDeveloperExceptionPage();
       }
 
-      app.UseConfigurationUi("/configuration");
+      app.UseConfigurationUi("/configuration"); // insert this line
 
       app.UseHttpsRedirection();
 
