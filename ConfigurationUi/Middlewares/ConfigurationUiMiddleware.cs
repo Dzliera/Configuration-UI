@@ -1,15 +1,17 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ConfigurationUi.Abstractions;
 using ConfigurationUi.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
+using NJsonSchema;
 
 namespace ConfigurationUi.Middlewares
 {
     internal class ConfigurationUiMiddleware : IMiddleware
     {
-        
         private readonly ConfigurationUiOptions _configurationUiOptions;
         private readonly IEditorUiBuilder _uiBuilder;
 
@@ -29,26 +31,95 @@ namespace ConfigurationUi.Middlewares
                 return;
             }
 
-            if (context.Request.Method == HttpMethods.Post)
+            var request = context.Request;
+
+
+            IConfiguration configuration;
+            
+            if (request.Method == HttpMethods.Post)
             {
-                var form = context.Request.Form;
                 var newConfiguration = new ConfigurationBuilder().AddInMemoryCollection().Build();
-                foreach (var (key, value) in form.Where(kv => kv.Key != "action"))
+                foreach (var (key, value) in request.Form.Where(kv => kv.Key != "action"))
                 {
                     newConfiguration[key] = value;
                 }
 
-                await _configurationUiOptions.StorageProvider.WriteConfigurationAsync(newConfiguration, _configurationUiOptions.Schema);
-            }
+                await _configurationUiOptions.StorageProvider.WriteConfigurationAsync(newConfiguration,
+                    _configurationUiOptions.Schema);
 
-            var configuration = await _configurationUiOptions.StorageProvider.ReadConfigurationAsync();
+                configuration = newConfiguration;
+            } else configuration = await _configurationUiOptions.StorageProvider.ReadConfigurationAsync();
+            
+            
             var schema = _configurationUiOptions.Schema;
 
-            var page = _uiBuilder.BuildHtml(configuration, schema);
+            string html;
+
+            if (request.Query.TryGetValue("configPath", out var configPath))
+            {
+                var configSection = GetSectionByConfigPath(configuration, configPath, request);
+
+                var componentSchema = GetSchemaByConfigSection(configSection, schema);
+
+                html = _uiBuilder.BuildComponentHtml(configSection, componentSchema);
+            }
+            else html = _uiBuilder.BuildHtml(configuration, schema);
+
 
             context.Response.ContentType = "text/html";
-            await context.Response.WriteAsync(page);
+            await context.Response.WriteAsync(html);
         }
-        
+
+        private static IConfigurationSection GetSectionByConfigPath(IConfiguration configuration, StringValues configPath,
+            HttpRequest request)
+        {
+            var configSection = configuration.GetSection(configPath);
+
+
+            if (request.Query.TryGetValue("type", out var componentType))
+            {
+                if (componentType == "newArrayItem")
+                {
+                    var itemIndex = request.Query["itemIndex"];
+                    configSection = configSection.GetSection(itemIndex);
+                    // ReSharper restore PossibleMultipleEnumeration
+                }
+            }
+
+            return configSection;
+        }
+
+        private JsonSchema GetSchemaByConfigSection(IConfigurationSection configSection, JsonSchema rootSchema)
+        {
+            var path = configSection.Path;
+            var sectionsToTraverse = path.Split(":");
+            return GetSchemaByConfigPathRecursive(rootSchema, new Queue<string>(sectionsToTraverse));
+        }
+
+        private JsonSchema GetSchemaByConfigPathRecursive(JsonSchema currentSchema,
+            Queue<string> sectionsToTraverse)
+        {
+            if (currentSchema.HasReference)
+                return GetSchemaByConfigPathRecursive(currentSchema.Reference, sectionsToTraverse);
+            if (currentSchema.OneOf.Count == 2 && currentSchema.OneOf.First().Type == JsonObjectType.Null)
+                return GetSchemaByConfigPathRecursive(currentSchema.OneOf.Last(), sectionsToTraverse);
+
+
+            if (sectionsToTraverse.Count == 0)
+            {
+                return currentSchema;
+            }
+
+            var sectionKey = sectionsToTraverse.Dequeue();
+
+
+            if (uint.TryParse(sectionKey, out _))
+            {
+                // if configuration key can be parsed as uint, we have array here
+                return GetSchemaByConfigPathRecursive(currentSchema.Item, sectionsToTraverse);
+            }
+
+            return GetSchemaByConfigPathRecursive(currentSchema.Properties[sectionKey], sectionsToTraverse);
+        }
     }
 }

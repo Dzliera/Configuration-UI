@@ -17,7 +17,7 @@ namespace SampleWebApp
         public string StringSetting { get; set; }
         public MyEnum EnumSetting { get; set; }
         public bool BooleanSetting { get; set; }
-        public string[] ArraySettings { get; set; }
+        public string[] ArraySetting { get; set; }
     }
 
     [Serializable]

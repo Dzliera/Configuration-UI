@@ -1,15 +1,17 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        $("input[type='checkbox']").click(checkboxClick)
+        const checkBoxes = $("input[type='checkbox']");
+        checkBoxes.click(e => updateCheckBoxValue(e.target))
+        for (const i in checkBoxes) {
+            updateCheckBoxValue(checkBoxes[i]);
+        }
     });
-
-
-    function checkboxClick(cb) {
+    
+    function updateCheckBoxValue(cb) {
         if (cb.checked) {
-            cb.target.value = true;
+            cb.value = true;
             return;
         }
-
-        cb.target.value = false;
+        cb.value = false;
     }
 </script>

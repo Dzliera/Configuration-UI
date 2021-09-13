@@ -1,3 +1,17 @@
 <script>
     
+   async function AddArrayItem(elem) {
+       const configPath = elem.getAttribute("data-configPath");
+       const ulElement = document.getElementById(configPath);
+       const newItemIndex = parseInt($(ulElement).attr("data-elemsCount")) + 1;
+       const resp = await fetch(`?type=newArrayItem&itemIndex=${newItemIndex}&configPath=${configPath}`);
+       const html = await resp.text();
+       $(ulElement).append(html)
+       $(ulElement).attr("data-elemsCount", newItemIndex);
+   }
+   
+   async function DeleteArrayItem(elem) {
+       // TODO implement
+   }
+   
 </script>

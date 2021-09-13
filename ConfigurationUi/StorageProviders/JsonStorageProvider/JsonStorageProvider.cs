@@ -15,7 +15,7 @@ namespace ConfigurationUi.StorageProviders
     internal class JsonStorageProvider : IConfigurationStorageProvider
     {
         private readonly string _filePath;
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
         public JsonStorageProvider(string filePath, IFileProvider fileProvider)
         {
@@ -31,7 +31,7 @@ namespace ConfigurationUi.StorageProviders
             }
             var configurationBuilder = new ConfigurationBuilder();
             configurationBuilder.SetFileProvider(fileProvider);
-            _configuration = configurationBuilder.AddJsonFile(_filePath).Build();
+            _configuration = configurationBuilder.AddJsonFile(fileInfo.PhysicalPath, false, true).Build();
         }
 
         public Task<IConfiguration> ReadConfigurationAsync()
@@ -76,6 +76,12 @@ namespace ConfigurationUi.StorageProviders
                 return arrayToken;
             }
 
+
+            if (schema.HasReference) return GetJTokenFromConfiguration(configuration, schema.Reference);
+
+            if (schema.OneOf.Count == 2 && schema.OneOf.First().Type == JsonObjectType.Null)
+                return GetJTokenFromConfiguration(configuration, schema.OneOf.Last());
+
             var section = configuration as IConfigurationSection;
             Debug.Assert(section != null, nameof(section) + " != null");
 
@@ -91,10 +97,6 @@ namespace ConfigurationUi.StorageProviders
                 return new JValue(long.Parse(value));
             if (schema.Type.HasFlag(JsonObjectType.Number))
                 return new JValue(decimal.Parse(value));
-            if (schema.HasReference) return GetJTokenFromConfiguration(configuration, schema.Reference);
-            
-            if (schema.OneOf.Count == 2 && schema.OneOf.First().Type == JsonObjectType.Null)
-                return GetJTokenFromConfiguration(configuration, schema.OneOf.Last());
             throw new NotSupportedException($"unsupported json token type {schema.Type}");
         }
 

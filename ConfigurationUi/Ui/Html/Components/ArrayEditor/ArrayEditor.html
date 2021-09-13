@@ -1,5 +1,10 @@
-﻿<ul class="collection with-header">
-    <li class="collection-header"><h5>{PropertyName}</h5></li>
-    {Elements}
-<!--    TODO: add append/remove element button and implement its logic-->
+﻿<ul class="collection with-header" id="{ConfigPath}" data-elemsCount="{ElemsCount}">
+    <li class="collection-header">
+        <h5>{PropertyName}</h5>
+        <div>
+            <i class="material-icons" data-configPath="{ConfigPath}" onclick="AddArrayItem(this)">add</i>
+            <i class="material-icons" data-configPath="{ConfigPath}" onclick="DeleteArrayItem(this)">delete</i>
+        </div>
+    </li>
+    {Items}
 </ul>

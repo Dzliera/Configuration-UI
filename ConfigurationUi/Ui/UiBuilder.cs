@@ -77,6 +77,11 @@ namespace ConfigurationUi.Ui
             return htmlBuilder.ToString();
         }
 
+        public string BuildComponentHtml(IConfigurationSection configurationSection, JsonSchema schema)
+        {
+            return GenerateHtmlRecursive(configurationSection, schema).ToString();
+        }
+
         private StringBuilder GenerateHtmlRecursive(IConfigurationSection configuration, JsonSchema schema)
         {
             if (schema.IsEnumeration)
@@ -123,7 +128,9 @@ namespace ConfigurationUi.Ui
 
         private StringBuilder BuildArrayEditorHtml(IConfigurationSection configuration, JsonSchema schema)
         {
-            var arrayBuilder = new StringBuilder(_arrayEditorComponent).Replace("{PropertyName}", configuration.Key);
+            var arrayBuilder = new StringBuilder(_arrayEditorComponent).Replace("{PropertyName}", configuration.Key)
+                .Replace("{ConfigPath}", configuration.Path)
+                .Replace("{ElemsCount}", configuration.GetChildren().Count().ToString());
 
             var elemSchema = schema.Item; // TODO support mixed schema arrays
 
@@ -149,12 +156,15 @@ namespace ConfigurationUi.Ui
 
         private StringBuilder BuildBooleanEditor(IConfigurationSection configuration)
         {
-            return FormatComponent(configuration, _booleanEditorHtmlComponent);
+            return new StringBuilder(_booleanEditorHtmlComponent)
+                .Replace("{PropertyName}", configuration.Key)
+                .Replace("{PropertyId}", configuration.Path)
+                .Replace("{Checked}", bool.TryParse(configuration.Value, out var val) && val ? "checked" : "");
         }
 
         private StringBuilder BuildDropDownEditorHtml(IConfigurationSection configuration, JsonSchema schema)
         {
-
+            
             // TODO support flags enum
 
             var dropDownEditorBuilder = new StringBuilder(_dropDownEditorComponent)
@@ -166,9 +176,12 @@ namespace ConfigurationUi.Ui
 
             foreach (var (name, value) in options)
             {
+                var valueStr = value.ToString();
                 optionsBuilder.Append(new StringBuilder(_dropDownEditorOptionsTemplate)
-                    .Replace("{Value}", value.ToString())
+                    .Replace("{Value}", valueStr)
                     .Replace("{Name}", name));
+
+                optionsBuilder.Replace("{Selected}", valueStr == configuration.Value ? "selected" : "");
             }
 
             dropDownEditorBuilder.Replace("{Options}", optionsBuilder.ToString());
