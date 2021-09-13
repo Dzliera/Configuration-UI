@@ -63,7 +63,8 @@ Using ConfigurationUI is very simple, it is done in 4 steps:
   }
   ```
   
- It's done. navigate to `/configuration` in browser and you will see configuration editor page
+ It's done. navigate to `/configuration` in browser and you will see configuration editor page: <br>
+ ![ConfigurationUi](Docs/SampleUi.png)
  
  # Important Notes
  
