@@ -25,7 +25,7 @@ namespace ConfigurationUi.StorageProviders
             if (!fileInfo.Exists)
             {
                 var directoryPath = Path.GetDirectoryName(filePath);
-                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath ?? throw new ArgumentException());
                 var streamWriter = File.CreateText(fileInfo.PhysicalPath);
                 streamWriter.WriteLine("{}"); // write empty json object initially
                 streamWriter.Flush();
