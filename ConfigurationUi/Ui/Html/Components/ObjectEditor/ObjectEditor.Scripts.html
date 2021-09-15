@@ -1,7 +1,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const elems = document.querySelector('.collapsible');
+        const elems = document.querySelectorAll('.collapsible');
         const instances = M.Collapsible.init(elems);
-        instances.open();
+        instances.forEach(i => i.open());
     });
 </script>
