@@ -13,7 +13,7 @@ namespace SampleWebApp
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .AddConfigurationUi<Settings>("settings.json")
+                .AddConfigurationUi<Settings>("app_data/settings.json")
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

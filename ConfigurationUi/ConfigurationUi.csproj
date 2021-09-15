@@ -2,11 +2,11 @@
 
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
-        <Title>ConfigurationUI</Title>
+        <Title>ConfigurationUi</Title>
         <TargetFramework>netstandard2.1</TargetFramework>
         <PackageId>OpSolutions.ConfigurationUi</PackageId>
         <Description>User-friendly web renderer and editor for asp.net configuration</Description>
-        <Version>1.0.0-beta</Version>
+        <Version>1.0.0-beta2</Version>
         <PackageTags>dotnetcore, aspnetcore, configuration</PackageTags>
         <RepositoryUrl>https://github.com/OP-Solutions/Configuration-UI</RepositoryUrl>
         <PackageIcon>PackageIcon.jpg</PackageIcon>
@@ -14,6 +14,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <IsPackable>true</IsPackable>
+        <Authors>Giorgi Chkhikvadze</Authors>
     </PropertyGroup>
 
     <ItemGroup>
