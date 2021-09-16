@@ -16,11 +16,10 @@ namespace ConfigurationUi.Extensions
             var optionsBuilder = new ConfigurationUiOptionsBuilder();
             
             
-            
             hostBuilder.ConfigureAppConfiguration((_, builder) =>
             {
                 optionsBuilder.UseJsonFileStorage(filePath, builder.GetFileProvider()).WithSchemeFromType<TConfigModel>();
-                builder.Sources.Insert(0, new JsonConfigurationSource() { Path = filePath });
+                builder.Sources.Add(new JsonConfigurationSource() { Path = filePath });
             });
 
             hostBuilder.ConfigureServices((_, services) =>
