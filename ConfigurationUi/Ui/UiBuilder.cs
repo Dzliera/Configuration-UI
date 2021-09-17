@@ -62,8 +62,8 @@ namespace ConfigurationUi.Ui
             _arrayEditorComponent = ReadComponentTemplate("ArrayEditor");
             _arrayElementTemplate = ReadComponentTemplate("ArrayEditor", "ArrayElement");
         }
-        
-        
+
+
         public string BuildHtml(IConfiguration configuration, JsonSchema schema)
         {
             var htmlBuilder = new StringBuilder(_rootUiHtml);
@@ -89,19 +89,16 @@ namespace ConfigurationUi.Ui
                 return BuildDropDownEditorHtml(configuration, schema);
             }
 
-            if (schema.Type.HasFlag(JsonObjectType.String))
-                return BuildTextEditorHtml(configuration);
-            if (schema.Type.HasFlag(JsonObjectType.Boolean))
-                return BuildBooleanEditor(configuration);
-            if (schema.Type.HasFlag(JsonObjectType.Number))
-                return BuildNumberEditorHtml(configuration);
-            if (schema.Type.HasFlag(JsonObjectType.Integer)) return BuildNumberEditorHtml(configuration);
+            if (schema.Type.HasFlag(JsonObjectType.String)) return BuildTextEditorHtml(configuration);
+            if (schema.Type.HasFlag(JsonObjectType.Boolean)) return BuildBooleanEditor(configuration);
+            if (schema.Type.HasFlag(JsonObjectType.Number)) return BuildDecimalEditorHtml(configuration);
+            if (schema.Type.HasFlag(JsonObjectType.Integer)) return BuildIntegerEditorHtml(configuration);
 
 
             if (schema.IsObject) return BuildObjectEditorHtml(configuration, schema);
 
             if (schema.IsArray) return BuildArrayEditorHtml(configuration, schema);
-            
+
             if (schema.Type == JsonObjectType.None)
             {
                 if (schema.OneOf.Count == 2 && schema.OneOf.First().Type == JsonObjectType.Null)
@@ -109,7 +106,7 @@ namespace ConfigurationUi.Ui
 
                 if (schema.HasReference) return GenerateHtmlRecursive(configuration, schema.Reference);
             }
-            
+
             // TODO support Dictionaries
             throw new NotSupportedException();
         }
@@ -135,7 +132,7 @@ namespace ConfigurationUi.Ui
             var elemSchema = schema.Item; // TODO support mixed schema arrays
 
             var elemsBuilder = new StringBuilder();
-            
+
             foreach (var arrayElemSection in configuration.GetChildren())
             {
                 var singleElementBuilder = new StringBuilder(_arrayElementTemplate);
@@ -164,7 +161,6 @@ namespace ConfigurationUi.Ui
 
         private StringBuilder BuildDropDownEditorHtml(IConfigurationSection configuration, JsonSchema schema)
         {
-            
             // TODO support flags enum
 
             var dropDownEditorBuilder = new StringBuilder(_dropDownEditorComponent)
@@ -189,11 +185,18 @@ namespace ConfigurationUi.Ui
             return dropDownEditorBuilder;
         }
 
-        private StringBuilder BuildNumberEditorHtml(IConfigurationSection configuration)
+        private StringBuilder BuildIntegerEditorHtml(IConfigurationSection configuration)
         {
-            return FormatComponent(configuration, _numericEditorHtmlComponent);
+            return FormatComponent(configuration, _numericEditorHtmlComponent)
+                .Replace("{Step}", "1");
         }
-        
+
+
+        private StringBuilder BuildDecimalEditorHtml(IConfigurationSection configuration)
+        {
+            return FormatComponent(configuration, _numericEditorHtmlComponent)
+                .Replace("{Step}", "any");
+        }
 
         private static StringBuilder FormatComponent(IConfigurationSection configuration, string template)
         {
@@ -232,7 +235,7 @@ namespace ConfigurationUi.Ui
             var templatesFolder = Path.Combine(_assemblyBasePath, TemplatesFolderPath);
             var rootTemplatePath = Path.Combine(templatesFolder, RootTemplateName);
             var rootHtmlBuilder = new StringBuilder(File.ReadAllText(rootTemplatePath));
-            
+
             var scriptsBuilder = new StringBuilder();
             foreach (var filePath in Directory.GetFiles(templatesFolder, "*.Scripts.html", SearchOption.AllDirectories))
             {
