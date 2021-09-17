@@ -6,7 +6,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <PackageId>OpSolutions.ConfigurationUi</PackageId>
         <Description>User-friendly web renderer and editor for asp.net configuration</Description>
-        <Version>1.0.0-beta7</Version>
+        <Version>1.0.0-beta8</Version>
         <PackageTags>dotnetcore, aspnetcore, configuration</PackageTags>
         <RepositoryUrl>https://github.com/OP-Solutions/Configuration-UI</RepositoryUrl>
         <PackageIcon>PackageIcon.jpg</PackageIcon>
