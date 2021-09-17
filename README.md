@@ -2,9 +2,9 @@
 
 [![NuGet Version](https://img.shields.io/nuget/v/OpSolutions.ConfigurationUI.svg)](https://www.nuget.org/packages/OpSolutions.ConfigurationUi)
 
-ConfigurationUI is .Net library for managing **Asp.Net Core** configuration. <br>
+ConfigurationUI is .Net library for managing **Asp.Net Core** configuration.    
 It can parse configuration schema from arbitrary .Net type and generate web-page for displaying/editing configuration in
-user-friendly manner. <br>
+user-friendly manner.    
 ConfigurationUI is fully integrated with with **built-in asp.net core
 configuration** `Microsoft.Extensions.Configuration`, so __developers don't have to change existing code__, just
 continue using well-known patterns: `OptionsMonitor<T>`, `IConfiguration`, etc ...
@@ -70,7 +70,8 @@ Using ConfigurationUI is very simple, it is done in 4 steps:
     }
     ```
 
-It's done. Navigate to `/configuration` in browser and you will see configuration editor page: <br> <br>
+It's done. Navigate to `/configuration` in browser and you will see configuration editor page:    
+
 ![ConfigurationUi](Docs/Images/SampleUi.png)
 
 # Important Notes
