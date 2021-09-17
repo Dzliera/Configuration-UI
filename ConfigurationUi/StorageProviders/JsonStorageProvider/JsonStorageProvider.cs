@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -98,7 +99,7 @@ namespace ConfigurationUi.StorageProviders
             if (schema.Type.HasFlag(JsonObjectType.Integer))
                 return new JValue(long.Parse(value));
             if (schema.Type.HasFlag(JsonObjectType.Number))
-                return new JValue(decimal.Parse(value));
+                return new JValue(decimal.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture));
             throw new NotSupportedException($"unsupported json token type {schema.Type}");
         }
 

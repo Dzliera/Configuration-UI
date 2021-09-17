@@ -23,9 +23,6 @@
     <ItemGroup>
         <None Include="../.assets/PackageIcon.jpg" Pack="true" PackagePath="/"/>
     </ItemGroup>
-    <ItemGroup>
-        <None Include="../.assets/PackageIcon.jpg" Pack="true" PackagePath="/"/>
-    </ItemGroup>
     
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />

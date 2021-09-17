@@ -8,15 +8,14 @@ namespace SampleWebApp
         public string StringSetting { get; set; }
         public int IntegerSetting { get; set; }
         public bool BooleanSetting { get; set; }
-        public SettingSubSection SettingsSubSection { get; set; }
+        public SettingsSubSection SettingsSubSection { get; set; }
     }
 
     [Serializable]
-    public class SettingSubSection
+    public class SettingsSubSection
     {
-        public string StringSetting { get; set; }
         public MyEnum EnumSetting { get; set; }
-        public bool BooleanSetting { get; set; }
+        public decimal DecimalSetting { get; set; }
         public string[] ArraySetting { get; set; }
     }
 
