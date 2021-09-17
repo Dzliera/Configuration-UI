@@ -47,6 +47,7 @@ namespace ConfigurationUi.StorageProviders
             var jToken = GetJTokenFromConfiguration(configuration, schema);
             await using var streamWriter = new StreamWriter(_filePath);
             using var jsonWriter = new JsonTextWriter(streamWriter);
+            jsonWriter.Formatting = Formatting.Indented;
             await jToken.WriteToAsync(jsonWriter);
             await jsonWriter.FlushAsync();
         }
