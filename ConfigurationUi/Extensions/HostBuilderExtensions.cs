@@ -19,7 +19,7 @@ namespace ConfigurationUi.Extensions
             hostBuilder.ConfigureAppConfiguration((_, builder) =>
             {
                 optionsBuilder.UseJsonFileStorage(filePath, builder.GetFileProvider()).WithSchemeFromType<TConfigModel>();
-                builder.Sources.Add(new JsonConfigurationSource() { Path = filePath });
+                builder.Sources.Add(new JsonConfigurationSource() { Path = filePath, ReloadOnChange = true});
             });
 
             hostBuilder.ConfigureServices((_, services) =>
