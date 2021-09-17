@@ -97,7 +97,7 @@ namespace ConfigurationUi.StorageProviders
             if (schema.Type.HasFlag(JsonObjectType.Boolean))
                 return new JValue(bool.Parse(value));
             if (schema.Type.HasFlag(JsonObjectType.Integer))
-                return new JValue(long.Parse(value));
+                return new JValue(long.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture));
             if (schema.Type.HasFlag(JsonObjectType.Number))
                 return new JValue(decimal.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture));
             throw new NotSupportedException($"unsupported json token type {schema.Type}");
