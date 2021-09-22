@@ -16,7 +16,7 @@ namespace ConfigurationUi.StorageProviders
     internal class JsonStorageProvider : IConfigurationStorageProvider
     {
         private readonly string _filePath;
-        private readonly IConfiguration _configuration;
+        public  IConfiguration Configuration { get; set; }
 
         public JsonStorageProvider(string filePath, IFileProvider fileProvider)
         {
@@ -34,14 +34,9 @@ namespace ConfigurationUi.StorageProviders
             }
             var configurationBuilder = new ConfigurationBuilder();
             configurationBuilder.SetFileProvider(fileProvider);
-            _configuration = configurationBuilder.AddJsonFile(fileInfo.PhysicalPath, false, true).Build();
+            Configuration = configurationBuilder.AddJsonFile(fileInfo.PhysicalPath, false, true).Build();
         }
-
-        public Task<IConfiguration> ReadConfigurationAsync()
-        {
-            return Task.FromResult(_configuration);
-        }
-
+        
         public async Task WriteConfigurationAsync(IConfiguration configuration, JsonSchema schema)
         {
             var jToken = GetJTokenFromConfiguration(configuration, schema);

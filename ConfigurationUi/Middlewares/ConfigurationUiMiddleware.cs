@@ -48,7 +48,7 @@ namespace ConfigurationUi.Middlewares
                     _configurationUiOptions.Schema);
 
                 configuration = newConfiguration;
-            } else configuration = await _configurationUiOptions.StorageProvider.ReadConfigurationAsync();
+            } else configuration = _configurationUiOptions.StorageProvider.Configuration;
             
             
             var schema = _configurationUiOptions.Schema;
