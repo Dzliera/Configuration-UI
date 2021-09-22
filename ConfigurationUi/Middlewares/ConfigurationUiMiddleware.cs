@@ -84,7 +84,13 @@ namespace ConfigurationUi.Middlewares
                     configSection = configSection.GetSection(itemIndex);
                     // ReSharper restore PossibleMultipleEnumeration
                 }
+                else if (componentType == "newDictionaryItem")
+                {
+                    var key = request.Query["itemKey"];
+                    configSection = configSection.GetSection(key);
+                }
             }
+            
 
             return configSection;
         }
@@ -113,10 +119,14 @@ namespace ConfigurationUi.Middlewares
             var sectionKey = sectionsToTraverse.Dequeue();
 
 
-            if (uint.TryParse(sectionKey, out _))
+            if (uint.TryParse(sectionKey, out _) && currentSchema.IsArray)
             {
                 // if configuration key can be parsed as uint, we have array here
                 return GetSchemaByConfigPathRecursive(currentSchema.Item, sectionsToTraverse);
+            }
+            if (currentSchema.IsDictionary)
+            {
+                return GetSchemaByConfigPathRecursive(currentSchema.AdditionalPropertiesSchema, sectionsToTraverse);
             }
 
             return GetSchemaByConfigPathRecursive(currentSchema.Properties[sectionKey], sectionsToTraverse);

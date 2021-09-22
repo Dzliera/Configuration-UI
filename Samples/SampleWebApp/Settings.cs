@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace SampleWebApp
 {
@@ -17,6 +18,7 @@ namespace SampleWebApp
         public MyEnum EnumSetting { get; set; }
         public decimal DecimalSetting { get; set; }
         public string[] ArraySetting { get; set; }
+        public Dictionary<string, string> DictionarySetting { get; set; }
     }
 
     [Serializable]

@@ -1,0 +1,30 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        InitFormInputs();
+    });
+
+    function InitFormInputs() {
+        const form = document.getElementById("mainForm");
+        InitConfigKeysRecursive(form, "");
+    }
+
+    function InitConfigKeysRecursive(elem, currenConfigurationPath) {
+
+        const elemKey = elem.getAttribute("data-key");
+        
+        if (elemKey) {
+            currenConfigurationPath = AppendKeyToConfigPath(currenConfigurationPath, elemKey);
+            elem.setAttribute("name", currenConfigurationPath)
+        }
+
+        for (let i = 0; i < elem.children.length; i++) {
+            const child = elem.children[i];
+            InitConfigKeysRecursive(child, currenConfigurationPath)
+        }
+    }
+
+    function AppendKeyToConfigPath(configurationPath, key) {
+        if (configurationPath === "") return key;
+        return configurationPath + ":" + key;
+    }
+</script>

@@ -32,6 +32,8 @@ namespace ConfigurationUi.Ui
 
         private string _arrayEditorComponent;
         private string _arrayElementTemplate;
+        private string _dictionaryEditorComponent;
+        private string _dictionaryElementTemplate;
 
         public UiBuilder()
         {
@@ -61,6 +63,9 @@ namespace ConfigurationUi.Ui
 
             _arrayEditorComponent = ReadComponentTemplate("ArrayEditor");
             _arrayElementTemplate = ReadComponentTemplate("ArrayEditor", "ArrayElement");
+
+            _dictionaryEditorComponent = ReadComponentTemplate("DictionaryEditor");
+            _dictionaryElementTemplate = ReadComponentTemplate("DictionaryEditor", "DictionaryElement");
         }
 
 
@@ -95,6 +100,8 @@ namespace ConfigurationUi.Ui
             if (schema.Type.HasFlag(JsonObjectType.Integer)) return BuildIntegerEditorHtml(configuration);
 
 
+            if (schema.IsDictionary) return BuildDictionaryEditorHtml(configuration, schema);
+
             if (schema.IsObject) return BuildObjectEditorHtml(configuration, schema);
 
             if (schema.IsArray) return BuildArrayEditorHtml(configuration, schema);
@@ -114,8 +121,8 @@ namespace ConfigurationUi.Ui
         private StringBuilder BuildObjectEditorHtml(IConfigurationSection configuration, JsonSchema schema)
         {
             var objectBuilder = new StringBuilder(_objectEditorHtmlComponent)
-                .Replace("{PropertyName}", configuration.Key)
-                .Replace("{PropertyId}", configuration.Path);
+                .Replace("{Title}", configuration.Key)
+                .Replace("{Key}", configuration.Key);
 
             var propertiesBuilder = GeneratePropertiesHtmlRecursive(configuration, schema);
             objectBuilder.Replace("{Properties}", propertiesBuilder.ToString());
@@ -125,9 +132,8 @@ namespace ConfigurationUi.Ui
 
         private StringBuilder BuildArrayEditorHtml(IConfigurationSection configuration, JsonSchema schema)
         {
-            var arrayBuilder = new StringBuilder(_arrayEditorComponent).Replace("{PropertyName}", configuration.Key)
-                .Replace("{ConfigPath}", configuration.Path)
-                .Replace("{ElemsCount}", configuration.GetChildren().Count().ToString());
+            var arrayBuilder = new StringBuilder(_arrayEditorComponent).Replace("{Title}", configuration.Key)
+                .Replace("{Key}", configuration.Key);
 
             var elemSchema = schema.Item; // TODO support mixed schema arrays
 
@@ -135,15 +141,59 @@ namespace ConfigurationUi.Ui
 
             foreach (var arrayElemSection in configuration.GetChildren())
             {
-                var singleElementBuilder = new StringBuilder(_arrayElementTemplate);
-                var elemHtml = GenerateHtmlRecursive(arrayElemSection, elemSchema);
-                singleElementBuilder.Replace("{Item}", elemHtml.ToString());
+                var singleElementBuilder = BuildArrayElemHtml(arrayElemSection, elemSchema);
                 elemsBuilder.Append(singleElementBuilder);
             }
 
             arrayBuilder.Replace("{Items}", elemsBuilder.ToString());
 
+            var template = BuildArrayElemHtml(configuration.GetSection("$template"), elemSchema);
+            arrayBuilder.Replace("{Template}", template.ToString());
             return arrayBuilder;
+        }
+
+        private StringBuilder BuildArrayElemHtml(IConfigurationSection arrayElemSection, JsonSchema elemSchema)
+        {
+            var singleElementBuilder = new StringBuilder(_arrayElementTemplate);
+            var elemHtml = GenerateHtmlRecursive(arrayElemSection, elemSchema);
+            singleElementBuilder.Replace("{Item}", elemHtml.ToString())
+                .Replace("{Key}", arrayElemSection.Key);
+            return singleElementBuilder;
+        }
+
+
+        private StringBuilder BuildDictionaryEditorHtml(IConfigurationSection configuration, JsonSchema schema)
+        {
+            var dictionaryBuilder = new StringBuilder(_dictionaryEditorComponent)
+                .Replace("{Title}", configuration.Key)
+                .Replace("{Key}", configuration.Key);
+
+            var elemSchema = schema.AdditionalPropertiesSchema;
+
+            var elemsBuilder = new StringBuilder();
+
+            foreach (var dictionaryElemSection in configuration.GetChildren())
+            {
+                var singleElementBuilder = BuildDictionaryElemHtml(dictionaryElemSection, elemSchema);
+                elemsBuilder.Append(singleElementBuilder);
+            }
+
+            dictionaryBuilder.Replace("{Items}", elemsBuilder.ToString());
+
+            var template = BuildArrayElemHtml(configuration.GetSection("$NULL"), elemSchema);
+            dictionaryBuilder.Replace("{Template}", template.ToString());
+
+            return dictionaryBuilder;
+        }
+
+        private StringBuilder BuildDictionaryElemHtml(IConfigurationSection dictionaryElemSection,
+            JsonSchema elemSchema)
+        {
+            var singleElementBuilder = new StringBuilder(_dictionaryElementTemplate);
+            var elemHtml = GenerateHtmlRecursive(dictionaryElemSection, elemSchema);
+            singleElementBuilder.Replace("{Item}", elemHtml.ToString())
+                .Replace("{Key}", dictionaryElemSection.Key);
+            return singleElementBuilder;
         }
 
         private StringBuilder BuildTextEditorHtml(IConfigurationSection configuration)
@@ -154,8 +204,8 @@ namespace ConfigurationUi.Ui
         private StringBuilder BuildBooleanEditor(IConfigurationSection configuration)
         {
             return new StringBuilder(_booleanEditorHtmlComponent)
-                .Replace("{PropertyName}", configuration.Key)
-                .Replace("{PropertyId}", configuration.Path)
+                .Replace("{Title}", configuration.Key)
+                .Replace("{Key}", configuration.Key)
                 .Replace("{Checked}", bool.TryParse(configuration.Value, out var val) && val ? "checked" : "");
         }
 
@@ -164,8 +214,8 @@ namespace ConfigurationUi.Ui
             // TODO support flags enum
 
             var dropDownEditorBuilder = new StringBuilder(_dropDownEditorComponent)
-                .Replace("{PropertyName}", configuration.Key)
-                .Replace("{PropertyId}", configuration.Path);
+                .Replace("{Title}", configuration.Key)
+                .Replace("{Key}", configuration.Key);
 
             var optionsBuilder = new StringBuilder();
             var options = schema.EnumerationNames.Zip(schema.Enumeration, (s, o) => (name: s, value: o));
@@ -201,8 +251,8 @@ namespace ConfigurationUi.Ui
         private static StringBuilder FormatComponent(IConfigurationSection configuration, string template)
         {
             return new StringBuilder(template)
-                .Replace("{PropertyName}", configuration.Key)
-                .Replace("{PropertyId}", configuration.Path)
+                .Replace("{Title}", configuration.Key)
+                .Replace("{Key}", configuration.Key)
                 .Replace("{Value}", configuration.Value);
         }
 

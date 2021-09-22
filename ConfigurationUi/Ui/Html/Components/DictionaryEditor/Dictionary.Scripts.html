@@ -1,0 +1,15 @@
+<script>
+
+    async function AddDictionaryItem(elem) {
+        const container = $(elem).closest("ul")
+        const template = $(container).find("template")[0];
+        const clone = template.content.cloneNode(true);
+        container[0].appendChild(clone)
+        InitFormInputs();
+    }
+
+    async function DeleteDictionaryItem(elem) {
+        // TODO implement
+    }
+
+</script>

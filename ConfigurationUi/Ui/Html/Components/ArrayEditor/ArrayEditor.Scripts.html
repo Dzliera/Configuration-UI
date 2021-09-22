@@ -1,13 +1,11 @@
 <script>
     
    async function AddArrayItem(elem) {
-       const configPath = elem.getAttribute("data-configPath");
-       const ulElement = document.getElementById(configPath);
-       const newItemIndex = parseInt($(ulElement).attr("data-elemsCount")) + 1;
-       const resp = await fetch(`?type=newArrayItem&itemIndex=${newItemIndex}&configPath=${configPath}`);
-       const html = await resp.text();
-       $(ulElement).append(html)
-       $(ulElement).attr("data-elemsCount", newItemIndex);
+       const container = $(elem).closest("ul")
+       const template = $(container).find("template")[0];
+       const clone = template.content.cloneNode(true);
+       container[0].appendChild(clone)
+       InitFormInputs();
    }
    
    async function DeleteArrayItem(elem) {
