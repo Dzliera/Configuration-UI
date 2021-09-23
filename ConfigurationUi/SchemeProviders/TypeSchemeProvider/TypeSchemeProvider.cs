@@ -5,9 +5,9 @@ namespace ConfigurationUi.SchemeProviders
 {
     public class TypeSchemeProvider<TSourceType> : IConfigurationSchemeProvider
     {
-        public JsonSchema GetConfigurationScheme()
+        public JsonSchema4 GetConfigurationScheme()
         {
-            return JsonSchema.FromType<TSourceType>();
+            return JsonSchema4.FromTypeAsync<TSourceType>().Result;
         }
     }
 }

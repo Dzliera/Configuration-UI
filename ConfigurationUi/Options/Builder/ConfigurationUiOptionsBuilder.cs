@@ -16,7 +16,7 @@ namespace ConfigurationUi.Options.Builder
         
         void IConfigurationUiStorageOptionsBuilder.WithSchemeFromType<T>()
         {
-            Options.Schema = JsonSchema.FromType<T>();
+            Options.Schema = JsonSchema4.FromTypeAsync<T>().Result;
         }
     }
 }

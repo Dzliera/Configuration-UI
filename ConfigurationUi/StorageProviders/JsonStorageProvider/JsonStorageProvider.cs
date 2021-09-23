@@ -37,7 +37,7 @@ namespace ConfigurationUi.StorageProviders
             Configuration = configurationBuilder.AddJsonFile(fileInfo.PhysicalPath, false, true).Build();
         }
         
-        public async Task WriteConfigurationAsync(IConfiguration configuration, JsonSchema schema)
+        public async Task WriteConfigurationAsync(IConfiguration configuration, JsonSchema4 schema)
         {
             var jToken = GetJTokenFromConfiguration(configuration, schema);
             await using var streamWriter = new StreamWriter(_filePath);
@@ -47,7 +47,7 @@ namespace ConfigurationUi.StorageProviders
             await jsonWriter.FlushAsync();
         }
 
-        private JToken GetJTokenFromConfiguration(IConfiguration configuration, JsonSchema schema)
+        private JToken GetJTokenFromConfiguration(IConfiguration configuration, JsonSchema4 schema)
         {
             if (schema.Type == JsonObjectType.Object)
             {
