@@ -14,12 +14,13 @@ namespace ConfigurationUi.Extensions
         public static IHostBuilder AddConfigurationUi<TConfigModel>(this IHostBuilder hostBuilder, string filePath)
         {
             var optionsBuilder = new ConfigurationUiOptionsBuilder();
-            
-            
+
+
             hostBuilder.ConfigureAppConfiguration((_, builder) =>
             {
-                optionsBuilder.UseJsonFileStorage(filePath, builder.GetFileProvider()).WithSchemeFromType<TConfigModel>();
-                builder.Sources.Add(new JsonConfigurationSource() { Path = filePath, ReloadOnChange = true});
+                optionsBuilder.UseJsonFileStorage(filePath, builder.GetFileProvider())
+                    .WithSchemeFromType<TConfigModel>();
+                builder.Sources.Add(new JsonConfigurationSource() { Path = filePath, ReloadOnChange = true });
             });
 
             hostBuilder.ConfigureServices((_, services) =>

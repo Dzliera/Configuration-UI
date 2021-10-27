@@ -4,7 +4,7 @@ namespace ConfigurationUi.Abstractions
 {
     public interface IConfigurationSchemeProvider
     {
-        public JsonSchema GetConfigurationScheme();
+        public JsonSchema4 GetConfigurationScheme();
     }
 
 }

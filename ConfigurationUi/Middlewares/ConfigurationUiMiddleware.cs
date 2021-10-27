@@ -48,7 +48,7 @@ namespace ConfigurationUi.Middlewares
                     _configurationUiOptions.Schema);
 
                 configuration = newConfiguration;
-            } else configuration = await _configurationUiOptions.StorageProvider.ReadConfigurationAsync();
+            } else configuration = _configurationUiOptions.StorageProvider.Configuration;
             
             
             var schema = _configurationUiOptions.Schema;
@@ -89,14 +89,14 @@ namespace ConfigurationUi.Middlewares
             return configSection;
         }
 
-        private JsonSchema GetSchemaByConfigSection(IConfigurationSection configSection, JsonSchema rootSchema)
+        private JsonSchema4 GetSchemaByConfigSection(IConfigurationSection configSection, JsonSchema4 rootSchema)
         {
             var path = configSection.Path;
             var sectionsToTraverse = path.Split(":");
             return GetSchemaByConfigPathRecursive(rootSchema, new Queue<string>(sectionsToTraverse));
         }
 
-        private JsonSchema GetSchemaByConfigPathRecursive(JsonSchema currentSchema,
+        private JsonSchema4 GetSchemaByConfigPathRecursive(JsonSchema4 currentSchema,
             Queue<string> sectionsToTraverse)
         {
             if (currentSchema.HasReference)

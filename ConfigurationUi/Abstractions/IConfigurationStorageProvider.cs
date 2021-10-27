@@ -6,7 +6,7 @@ namespace ConfigurationUi.Abstractions
 {
     public interface IConfigurationStorageProvider
     {
-        public Task<IConfiguration> ReadConfigurationAsync();
-        public Task WriteConfigurationAsync(IConfiguration configuration, JsonSchema schema);
+        public IConfiguration Configuration { get; set; }
+        public Task WriteConfigurationAsync(IConfiguration configuration, JsonSchema4 schema);
     }
 }

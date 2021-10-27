@@ -64,7 +64,7 @@ namespace ConfigurationUi.Ui
         }
 
 
-        public string BuildHtml(IConfiguration configuration, JsonSchema schema)
+        public string BuildHtml(IConfiguration configuration, JsonSchema4 schema)
         {
             var htmlBuilder = new StringBuilder(_rootUiHtml);
 
@@ -77,12 +77,12 @@ namespace ConfigurationUi.Ui
             return htmlBuilder.ToString();
         }
 
-        public string BuildComponentHtml(IConfigurationSection configurationSection, JsonSchema schema)
+        public string BuildComponentHtml(IConfigurationSection configurationSection, JsonSchema4 schema)
         {
             return GenerateHtmlRecursive(configurationSection, schema).ToString();
         }
 
-        private StringBuilder GenerateHtmlRecursive(IConfigurationSection configuration, JsonSchema schema)
+        private StringBuilder GenerateHtmlRecursive(IConfigurationSection configuration, JsonSchema4 schema)
         {
             if (schema.IsEnumeration)
             {
@@ -111,7 +111,7 @@ namespace ConfigurationUi.Ui
             throw new NotSupportedException();
         }
 
-        private StringBuilder BuildObjectEditorHtml(IConfigurationSection configuration, JsonSchema schema)
+        private StringBuilder BuildObjectEditorHtml(IConfigurationSection configuration, JsonSchema4 schema)
         {
             var objectBuilder = new StringBuilder(_objectEditorHtmlComponent)
                 .Replace("{PropertyName}", configuration.Key)
@@ -123,7 +123,7 @@ namespace ConfigurationUi.Ui
             return objectBuilder;
         }
 
-        private StringBuilder BuildArrayEditorHtml(IConfigurationSection configuration, JsonSchema schema)
+        private StringBuilder BuildArrayEditorHtml(IConfigurationSection configuration, JsonSchema4 schema)
         {
             var arrayBuilder = new StringBuilder(_arrayEditorComponent).Replace("{PropertyName}", configuration.Key)
                 .Replace("{ConfigPath}", configuration.Path)
@@ -159,7 +159,7 @@ namespace ConfigurationUi.Ui
                 .Replace("{Checked}", bool.TryParse(configuration.Value, out var val) && val ? "checked" : "");
         }
 
-        private StringBuilder BuildDropDownEditorHtml(IConfigurationSection configuration, JsonSchema schema)
+        private StringBuilder BuildDropDownEditorHtml(IConfigurationSection configuration, JsonSchema4 schema)
         {
             // TODO support flags enum
 
@@ -207,7 +207,7 @@ namespace ConfigurationUi.Ui
         }
 
 
-        private StringBuilder GeneratePropertiesHtmlRecursive(IConfiguration configuration, JsonSchema schema)
+        private StringBuilder GeneratePropertiesHtmlRecursive(IConfiguration configuration, JsonSchema4 schema)
         {
             var propertiesBuilder = new StringBuilder();
             foreach (var jsonSchemaProperty in schema.Properties.Values)

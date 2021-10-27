@@ -15,5 +15,6 @@ namespace SampleWebApp
             Host.CreateDefaultBuilder(args)
                 .AddConfigurationUi<Settings>("app_data/settings.json")
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+        
     }
 }
