@@ -14,11 +14,17 @@
             margin: auto;
             padding: 10px
         }
+        label{
+            pointer-events: none;
+        }
+        .input-field{
+            flex-grow: 1;
+        }
     </style>
 </head>
 <body>
-<form class="mainForm" method="post">
-    <h3 style="margin: auto; text-align: center; width: max-content">Configuration Editor</h3>
+<form class="mainForm" id="mainForm" method="post">
+    <h3 style="margin: 3rem; text-align: center; width: max-content">Configuration Editor</h3>
     {CfgProperties}
     <div style="width: 100%; display: flex; justify-content: end">
         <button class="btn waves-effect waves-light" type="submit" name="action">
