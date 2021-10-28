@@ -5,8 +5,7 @@
        const curElemsCount = $(container).children(".collection-item").length
        const template = $(container).find("template")[0];
        const clone = template.content.cloneNode(true);
-       const newElemsCount = curElemsCount + 1;
-       clone.children[0].innerHTML = clone.children[0].innerHTML.replaceAll("$template", newElemsCount.toString());
+       clone.children[0].innerHTML = clone.children[0].innerHTML.replaceAll("$template", curElemsCount.toString());
        container[0].appendChild(clone)
        
        InitFormInputs();
