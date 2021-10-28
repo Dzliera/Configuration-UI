@@ -1,30 +1,34 @@
 <script>
     
    async function AddArrayItem(elem) {
-       const container = $(elem).closest("ul")
-       const curElemsCount = $(container).children(".collection-item").length
+       const container = $(elem).closest("ul");
+       const curElemsCount = $(container).children(".collection-item").length;
        const template = $(container).find("template")[0];
        const clone = template.content.cloneNode(true);
        clone.children[0].innerHTML = clone.children[0].innerHTML.replaceAll("$template", curElemsCount.toString());
-       container[0].appendChild(clone)
+       container[0].appendChild(clone);
        InitFormInputs();
-       //$("form").submit();
    }
    
-   async function DeleteArrayItem(elem) {
-       // TODO implement
+   function DeleteArrayItem(elem) {
+       const ul = $(elem).closest("ul")[0];
+       const li = $(elem).closest("li")[0];
+       li.remove();
+       UpdateArrayElemIndexes(ul);
    }
    
    
    function UpdateArrayElemIndexes(ul)
    {
-       const elems = $(container).children(".collection-item");
-       let curElemIndex = 1;
-       elems.forEach(elem => {
-           elem.children[0].innerHTML = clone.children[0].innerHTML.replaceAll("$template", curElemIndex.toString());
+       const elems = $(ul).children(".collection-item");
+       let curElemIndex = 0;
+       elems.each(index => {
+           const elem = elems[index];
+           $(elem).find("[data-key]").first().attr("data-key", curElemIndex);
+           $(elem).find(".title-marker").first().html(curElemIndex);
+           curElemIndex++;
        });
-       clone.children[0].innerHTML = clone.children[0].innerHTML.replaceAll("$template", curElemsCount.toString());
-       container[0].appendChild(clone)
+       InitFormInputs();
    }
    
 </script>
