@@ -7,12 +7,24 @@
        const clone = template.content.cloneNode(true);
        clone.children[0].innerHTML = clone.children[0].innerHTML.replaceAll("$template", curElemsCount.toString());
        container[0].appendChild(clone)
-       
        InitFormInputs();
+       //$("form").submit();
    }
    
    async function DeleteArrayItem(elem) {
        // TODO implement
+   }
+   
+   
+   function UpdateArrayElemIndexes(ul)
+   {
+       const elems = $(container).children(".collection-item");
+       let curElemIndex = 1;
+       elems.forEach(elem => {
+           elem.children[0].innerHTML = clone.children[0].innerHTML.replaceAll("$template", curElemIndex.toString());
+       });
+       clone.children[0].innerHTML = clone.children[0].innerHTML.replaceAll("$template", curElemsCount.toString());
+       container[0].appendChild(clone)
    }
    
 </script>
