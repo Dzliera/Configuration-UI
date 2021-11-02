@@ -119,7 +119,7 @@ namespace ConfigurationUi.Middlewares
                 return GetSchemaByConfigPathRecursive(currentSchema.Item, sectionsToTraverse);
             }
 
-            return GetSchemaByConfigPathRecursive(currentSchema.Properties[sectionKey], sectionsToTraverse);
+            return GetSchemaByConfigPathRecursive(currentSchema.Properties[sectionKey!], sectionsToTraverse);
         }
     }
 }
