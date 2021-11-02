@@ -1,1 +1,19 @@
 @inherits EditorComponentBase
+
+<MudTextField @bind-Value="Config.Value" Label="@Schema.Title">
+
+</MudTextField>
+
+@code
+{
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        if (Schema.Type != JsonObjectType.String)
+            throw new ArgumentException($"Invalid schema type for TextEditor. Expected string, got {Schema.Type}");
+
+        if (Config.GetChildren().Any())
+            throw new ArgumentException("TextEditor is associated to wrong configuration section," +
+                                        "section should not have children");
+    }
+}
