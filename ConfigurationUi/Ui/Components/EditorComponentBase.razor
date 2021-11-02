@@ -1,0 +1,15 @@
+﻿
+@code {
+    
+    /// <summary>
+    /// Current configuration section, which should be rendered by this component
+    /// </summary>
+    [CascadingParameter]
+    public IConfigurationSection Config { get; set; }
+
+    /// <summary>
+    /// Schema for current configuration section
+    /// </summary>
+    [CascadingParameter]
+    public JsonSchema4 Schema { get; set; }
+}

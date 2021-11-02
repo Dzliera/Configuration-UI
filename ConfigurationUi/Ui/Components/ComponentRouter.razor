@@ -1,0 +1,42 @@
+﻿
+
+<CascadingValue TValue="IConfigurationSection" Value="Config">
+        <CascadingValue TValue="JsonSchema4" Value="Schema">
+            @if (Schema.Type == JsonObjectType.String)
+            {
+                <TextEditor></TextEditor>
+            }
+            else if (Schema.Type == JsonObjectType.Integer)
+            {
+                <IntegerEditor></IntegerEditor>
+            }
+            else if (Schema.Type == JsonObjectType.Number)
+            {
+                <NumberEditor></NumberEditor>
+            }
+            else if (Schema.Type == JsonObjectType.Boolean)
+            {
+                <BooleanEditor></BooleanEditor>
+            }
+            else if (Schema.IsEnumeration)
+            {
+                <EnumEditor></EnumEditor>
+            }
+        </CascadingValue>
+    </CascadingValue>
+
+
+@code
+{
+    /// <summary>
+    /// Current configuration section, which should be rendered by this component
+    /// </summary>
+    [Parameter]
+    public IConfigurationSection Config { get; set; }
+
+    /// <summary>
+    /// Schema for current configuration section
+    /// </summary>
+    [Parameter]
+    public JsonSchema4 Schema { get; set; }
+}

@@ -7,6 +7,7 @@ namespace ConfigurationUi.Extensions
 {
     public static class ApplicationBuilderExtensions
     {
+        
         public static void UseConfigurationUi(this IApplicationBuilder builder, string webUiPath)
         {
             builder.ApplicationServices.GetRequiredService<ConfigurationUiOptions>().WebUiPath = webUiPath;

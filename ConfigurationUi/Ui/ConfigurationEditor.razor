@@ -1,0 +1,30 @@
+﻿@inherits ConfigurationUi.Ui.Components.EditorComponentBase
+
+<MudCard>
+    <MudCardHeader>Configuration Editor</MudCardHeader>
+    <MudCardContent>
+    @foreach (var property in Schema.Properties)
+    {
+        
+    }
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Filled">Save</MudButton>
+        <MudButton Variant="Variant.Filled">Discard Changes</MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code {
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+       if(Schema.Type != JsonObjectType.Object)
+           throw new ArgumentException($"Invalid configuration schema type. Expected object, got {Schema.Type}");
+
+        if (Config.GetChildren().Any())
+            throw new ArgumentException("TextEditor is associated to wrong configuration section," +
+                                        "section should not have children");
+    }
+
+}

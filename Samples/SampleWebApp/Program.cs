@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using ConfigurationUi.Extensions;
+using NJsonSchema;
 
 namespace SampleWebApp
 {
@@ -8,6 +9,7 @@ namespace SampleWebApp
     {
         public static void Main(string[] args)
         {
+            var schema = JsonSchema4.FromTypeAsync<Settings>().Result;
             CreateHostBuilder(args).Build().Run();
         }
 
