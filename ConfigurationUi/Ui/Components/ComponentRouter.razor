@@ -1,29 +1,27 @@
-﻿
-
-<CascadingValue TValue="IConfigurationSection" Value="Config">
-        <CascadingValue TValue="JsonSchema4" Value="Schema">
-            @if (Schema.Type == JsonObjectType.String)
-            {
-                <TextEditor></TextEditor>
-            }
-            else if (Schema.Type == JsonObjectType.Integer)
-            {
-                <IntegerEditor></IntegerEditor>
-            }
-            else if (Schema.Type == JsonObjectType.Number)
-            {
-                <NumberEditor></NumberEditor>
-            }
-            else if (Schema.Type == JsonObjectType.Boolean)
-            {
-                <BooleanEditor></BooleanEditor>
-            }
-            else if (Schema.IsEnumeration)
-            {
-                <EnumEditor></EnumEditor>
-            }
-        </CascadingValue>
+﻿<CascadingValue TValue="IConfigurationSection" Value="Config">
+    <CascadingValue TValue="JsonSchema4" Value="Schema">
+        @if (Schema.Type == JsonObjectType.String)
+        {
+            <TextEditor></TextEditor>
+        }
+        else if (Schema.Type == JsonObjectType.Integer)
+        {
+            <IntegerEditor></IntegerEditor>
+        }
+        else if (Schema.Type == JsonObjectType.Number)
+        {
+            <NumberEditor></NumberEditor>
+        }
+        else if (Schema.Type == JsonObjectType.Boolean)
+        {
+            <BooleanEditor></BooleanEditor>
+        }
+        else if (Schema.IsEnumeration)
+        {
+            <EnumEditor></EnumEditor>
+        }
     </CascadingValue>
+</CascadingValue>
 
 
 @code
