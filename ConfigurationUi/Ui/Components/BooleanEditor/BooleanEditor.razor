@@ -1,2 +1,37 @@
 ﻿@namespace ConfigurationUi.Ui.Components
 @inherits EditorComponentBase
+<MudCheckBox @bind-Checked="Checked" Color="Color.Primary"></MudCheckBox>
+
+
+@code
+{
+    private bool _checked;
+    
+    private bool Checked
+    {
+        get => _checked;
+        set => CheckedStateChanged(value);
+    }
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        if (Schema.Type != JsonObjectType.Boolean)
+            throw new ArgumentException($"Invalid schema type for BooleanEditor. Expected Boolean, got {Schema.Type}");
+        
+        if (Config.GetChildren().Any())
+            throw new ArgumentException("BooleanEditor is associated to wrong configuration section," +
+                                        "section should not have children");
+        
+        var canParse = bool.TryParse(Config.Value, out bool result);
+        if (!canParse) throw new ArgumentException("parsing error: invalid configuration value, expected bool");
+        Checked = result;
+    }
+    
+    private void CheckedStateChanged(bool value)
+    {
+        _checked = value;
+        Config.Value = value.ToString();
+    }
+    
+}
