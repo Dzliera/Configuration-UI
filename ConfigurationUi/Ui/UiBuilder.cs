@@ -152,7 +152,7 @@ namespace ConfigurationUi.Ui
             return arrayBuilder;
         }
 
-        private StringBuilder BuildArrayElemHtml(IConfigurationSection arrayElemSection, JsonSchema elemSchema)
+        private StringBuilder BuildArrayElemHtml(IConfigurationSection arrayElemSection, JsonSchema4 elemSchema)
         {
             var singleElementBuilder = new StringBuilder(_arrayElementTemplate);
             var elemHtml = GenerateHtmlRecursive(arrayElemSection, elemSchema);
@@ -162,7 +162,7 @@ namespace ConfigurationUi.Ui
         }
 
 
-        private StringBuilder BuildDictionaryEditorHtml(IConfigurationSection configuration, JsonSchema schema)
+        private StringBuilder BuildDictionaryEditorHtml(IConfigurationSection configuration, JsonSchema4 schema)
         {
             var dictionaryBuilder = new StringBuilder(_dictionaryEditorComponent)
                 .Replace("{Title}", configuration.Key)
@@ -187,7 +187,7 @@ namespace ConfigurationUi.Ui
         }
 
         private StringBuilder BuildDictionaryElemHtml(IConfigurationSection dictionaryElemSection,
-            JsonSchema elemSchema)
+            JsonSchema4 elemSchema)
         {
             var singleElementBuilder = new StringBuilder(_dictionaryElementTemplate);
             var elemHtml = GenerateHtmlRecursive(dictionaryElemSection, elemSchema);
