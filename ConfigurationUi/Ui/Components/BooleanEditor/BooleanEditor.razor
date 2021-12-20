@@ -23,7 +23,7 @@
             throw new ArgumentException("BooleanEditor is associated to wrong configuration section," +
                                         "section should not have children");
         
-        var canParse = bool.TryParse(Config.Value, out bool result);
+        var canParse = bool.TryParse(Config.Value, out var result);
         if (!canParse) throw new ArgumentException("parsing error: invalid configuration value, expected bool");
         Checked = result;
     }

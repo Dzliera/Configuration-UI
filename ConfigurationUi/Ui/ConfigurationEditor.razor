@@ -1,11 +1,16 @@
 ﻿@inherits ConfigurationUi.Ui.Components.EditorComponentBase
+
 <MudCard>
     <MudCardHeader>Configuration Editor</MudCardHeader>
     <MudCardContent>
-        @foreach (var property in Schema.Properties)
-        {
-            <ComponentRouter Config="@Config.GetSection(property.Key)" Schema="@property.Value"></ComponentRouter>
-        }
+        <CascadingValue TValue="IConfigurationSection" Value="Config">
+            <CascadingValue TValue="JsonSchema4" Value="Schema">
+                @foreach (var (key, value) in Schema.Properties)
+                {
+                    <ComponentRouter Config="@Config.GetSection(key)" Schema="@value"></ComponentRouter>
+                }
+            </CascadingValue>
+        </CascadingValue>
     </MudCardContent>
     <MudCardActions>
         <MudButton Variant="Variant.Filled">Save</MudButton>
