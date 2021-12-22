@@ -1,14 +1,12 @@
-using System;
-
-namespace SampleWebApp
+namespace BlazorSample.Server
 {
     [Serializable]
     public class Settings
     {
-        public string StringSetting { get; set; }
+        public string? StringSetting { get; set; }
         public int IntegerSetting { get; set; }
         public bool BooleanSetting { get; set; }
-        public SettingsSubSection SettingsSubSection { get; set; }
+        public SettingsSubSection? SettingsSubSection { get; set; }
     }
 
     [Serializable]
@@ -16,7 +14,7 @@ namespace SampleWebApp
     {
         public MyEnum EnumSetting { get; set; }
         public decimal DecimalSetting { get; set; }
-        public string[] ArraySetting { get; set; }
+        public string[]? ArraySetting { get; set; }
     }
 
     [Serializable]
