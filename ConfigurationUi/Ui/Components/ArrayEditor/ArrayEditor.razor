@@ -3,17 +3,23 @@
 
 <ul class="collection with-header">
     <li class="collection-header">
-        <h5>@Config.Key</h5>
+        <h5>@Key</h5>
         <div>
             <MudIconButton Icon="@Icons.Filled.Add" OnClick="OnAddArrayElemClick"/>
         </div>
     </li>
-    @foreach (var item in _items)
+    @for (var index = 0; index < _array.Count; index++)
     {
+        var item = _array[index];
+        
+        // should copy index before capture, because it's value changes in loop
+        var currentIndex = index; 
+        
         <li class="collection-item">
-            <MudText Class="element-index" Typo="Typo.h6">@(item.Key + ". ")</MudText>
-            <ComponentRouter Config="Config.GetSection(item.Key)" Schema="Schema.Item"/>
-            <MudIconButton Icon="@Icons.Filled.Delete" Class="delete-button" OnClick="() => DeleteArrayItem(item.Key)"/>
+            <MudText Class="element-index" Typo="@Typo.h6">@(currentIndex + ". ")</MudText>
+            <ComponentRouter Token="@item" Schema="@Schema.Item"/>
+            <MudIconButton Icon="@Icons.Filled.Delete" Class="delete-button" 
+                           OnClick="@(() => _array.RemoveAt(currentIndex))"/>
         </li>
     }
 </ul>
@@ -21,7 +27,7 @@
 
 @code {
 
-    private List<IConfigurationSection> _items;
+    private JArray _array;
 
     /// <inheritdoc />
     protected override void OnInitialized()
@@ -31,72 +37,18 @@
             throw new ArgumentException($"Invalid schema type for ArrayEditor. Expected Array, got {Schema.Type}");
         }
 
-        var children = Config.GetChildren().ToArray();
-        var itemCount = children.Length;
-
-        _items = children.OrderBy(configSection =>
+        if (Token is not JArray array)
         {
-            if (!int.TryParse(configSection.Key, out var index))
-            {
-                throw new ArgumentException("ArrayEditor is associated to wrong configuration section," +
-                                            "section should not have children with non-integer keys");
-            }
+            throw new ArgumentException($"Invalid token, token should be JArray");
+        }
 
-            if (index >= itemCount || index <= 0)
-            {
-                throw new ArgumentException("ArrayEditor is associated to wrong configuration section," +
-                                            "section should not have children with out of range array index");
-            }
-
-            return index;
-        }).ToList();
+        _array = array;
     }
 
     private void OnAddArrayElemClick(MouseEventArgs args)
     {
-        _items.Add(Config.GetSection(_items.Count.ToString()));
-    }
-
-    private void DeleteArrayItem(string itemKey)
-    {
-        var index = int.Parse(itemKey);
-        _items.RemoveAt(index);
-        var currentIndex = 0;
-        foreach (var section in _items.Skip(index + 1))
-        {
-            var newIndex = currentIndex - 1;
-
-            if (section.Value != null)
-            {
-                SliceItem(currentIndex, newIndex);
-                continue;
-            }
-
-            foreach (var (itemRelativePath, value) in section.AsEnumerable(true))
-            {
-                SliceItemChild(currentIndex, newIndex, itemRelativePath, value);
-            }
-            
-            currentIndex++;
-        }
-    }
-
-    private void SliceItemChild(int currentIndex, int newIndex, string itemRelativePath, string value)
-    {
-        var currentItemKey = currentIndex.ToString();
-        var newItemKey = newIndex.ToString();
-        var oldPath = ConfigurationPath.Combine(currentItemKey, itemRelativePath);
-        var newPath = ConfigurationPath.Combine(newItemKey, itemRelativePath);
-        Config[newPath] = value; // set this value to new path
-        Config[oldPath] = null; // clear old value
-    }
-
-    private void SliceItem(int currentIndex, int newIndex)
-    {
-        var currentItemKey = currentIndex.ToString();
-        var newItemKey = newIndex.ToString();
-        Config[newItemKey] = Config[currentItemKey]; // set this value to new path
-        Config[currentItemKey] = null; // clear old value
+        // TODO support adding elems in non empty array
+        _array.Add(_array.Last.DeepClone()); 
     }
 
 }

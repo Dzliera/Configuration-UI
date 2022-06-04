@@ -1,17 +1,13 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using ConfigurationUi.Abstractions;
+using ConfigurationUi.Server.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
 
-namespace ConfigurationUi.StorageProviders
+namespace ConfigurationUi.Server.StorageProviders.JsonStorageProvider
 {
     internal class JsonStorageProvider : IConfigurationStorageProvider
     {
@@ -37,14 +33,14 @@ namespace ConfigurationUi.StorageProviders
             Configuration = configurationBuilder.AddJsonFile(fileInfo.PhysicalPath, false, true).Build();
         }
         
-        public async Task WriteConfigurationAsync(IConfiguration configuration, JsonSchema4 schema)
+        public async Task SaveConfigurationAsync(IConfiguration configuration, JsonSchema4 schema)
         {
             var jToken = GetJTokenFromConfiguration(configuration, schema);
             await using var streamWriter = new StreamWriter(_filePath);
             using var jsonWriter = new JsonTextWriter(streamWriter);
             jsonWriter.Formatting = Formatting.Indented;
-            await jToken.WriteToAsync(jsonWriter);
-            await jsonWriter.FlushAsync();
+            jToken.WriteTo(jsonWriter);
+            jsonWriter.Flush();
         }
 
         private JToken GetJTokenFromConfiguration(IConfiguration configuration, JsonSchema4 schema)

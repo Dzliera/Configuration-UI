@@ -1,15 +1,25 @@
-﻿
-@code {
+﻿@code {
     
     /// <summary>
-    /// Current configuration section, which should be rendered by this component
+    /// Current configuration token, which should be rendered by this component
     /// </summary>
-    [CascadingParameter]
-    public IConfigurationSection Config { get; set; }
+    [Parameter]
+    [EditorRequired]
+    public JToken Token { get; set; }
+    
+    
+    
+    /// <summary>
+    /// Key of element in parent
+    /// </summary>
+    [Parameter]
+    [EditorRequired]
+    public string Key { get; set; }
 
     /// <summary>
     /// Schema for current configuration section
     /// </summary>
-    [CascadingParameter]
+    [Parameter]
+    [EditorRequired]
     public JsonSchema4 Schema { get; set; }
 }

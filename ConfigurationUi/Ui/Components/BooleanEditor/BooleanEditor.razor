@@ -1,4 +1,5 @@
 ﻿@namespace ConfigurationUi.Ui.Components
+@using Newtonsoft.Json.Linq
 @inherits EditorComponentBase
 <MudCheckBox @bind-Checked="Checked" Color="Color.Primary"></MudCheckBox>
 
@@ -19,19 +20,17 @@
         if (Schema.Type != JsonObjectType.Boolean)
             throw new ArgumentException($"Invalid schema type for BooleanEditor. Expected Boolean, got {Schema.Type}");
         
-        if (Config.GetChildren().Any())
-            throw new ArgumentException("BooleanEditor is associated to wrong configuration section," +
-                                        "section should not have children");
-        
-        var canParse = bool.TryParse(Config.Value, out var result);
-        if (!canParse) throw new ArgumentException("parsing error: invalid configuration value, expected bool");
-        Checked = result;
+        if (Token.Type != JTokenType.Boolean)
+            throw new ArgumentException("BooleanEditor is associated to value of wrong type. " +
+                                        $"Expected Boolean, got {Token.Type}");
+
+        Checked = (bool) Token;
     }
     
     private void CheckedStateChanged(bool value)
     {
         _checked = value;
-        Config.Value = value.ToString();
+        Token = value;
     }
     
 }

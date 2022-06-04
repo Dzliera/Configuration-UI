@@ -1,20 +1,35 @@
-@namespace ConfigurationUi.Ui.Components
 @inherits EditorComponentBase
 
-<MudTextField @bind-Value="Config.Value" Label="@Schema.Title">
+<MudTextField @bind-Value="Value" Label="@Schema.Title">
 
 </MudTextField>
 
 @code
 {
+    private string _value;
+    
+    private string Value
+    {
+        get => _value;
+        set => SetValue(value);
+    }
+    
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
         if (Schema.Type != JsonObjectType.String)
             throw new ArgumentException($"Invalid schema type for TextEditor. Expected string, got {Schema.Type}");
 
-        if (Config.GetChildren().Any())
-            throw new ArgumentException("TextEditor is associated to wrong configuration section," +
-                                        "section should not have children");
+        if (Token.Type != JTokenType.String)
+            throw new ArgumentException("NumberEditor is associated to value of wrong type. " + 
+                                        $"Expected string, got {Schema.Type}");
+
+        _value = (string) Token;
+    }
+    
+    private void SetValue(string value)
+    {
+        _value = value;
+        Token = _value;
     }
 }

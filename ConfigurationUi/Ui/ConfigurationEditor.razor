@@ -1,16 +1,16 @@
-﻿@inherits ConfigurationUi.Ui.Components.EditorComponentBase
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using ConfigurationUi.Models
+@using Newtonsoft.Json.Linq
+@inject HttpClient _httpClient;
 
 <MudCard>
     <MudCardHeader>Configuration Editor</MudCardHeader>
     <MudCardContent>
-        <CascadingValue TValue="IConfigurationSection" Value="Config">
-            <CascadingValue TValue="JsonSchema4" Value="Schema">
-                @foreach (var (key, value) in Schema.Properties)
-                {
-                    <ComponentRouter Config="@Config.GetSection(key)" Schema="@value"></ComponentRouter>
-                }
-            </CascadingValue>
-        </CascadingValue>
+        @foreach (var (key, value) in _schema.Properties)
+        {
+            <ComponentRouter Token="@_configurationObject[key]" Schema="@value"></ComponentRouter>
+        }
     </MudCardContent>
     <MudCardActions>
         <MudButton Variant="Variant.Filled">Save</MudButton>
@@ -20,15 +20,27 @@
 
 @code {
 
-    /// <inheritdoc />
-    protected override void OnParametersSet()
-    {
-        if (Schema.Type != JsonObjectType.Object)
-            throw new ArgumentException($"Invalid configuration schema type. Expected object, got {Schema.Type}");
+    /// <summary>
+    /// Url of configurationUI configuration API
+    /// </summary>
+    [Parameter]
+    public string ApiUrl { get; set; } = "/api/configuration-ui/configuration";
 
-        if (Config.GetChildren().Any())
-            throw new ArgumentException("TextEditor is associated to wrong configuration section," +
-                                        "section should not have children");
+
+    private JObject _configurationObject;
+    private JsonSchema4 _schema;
+
+
+    /// <inheritdoc />
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var getConfigurationResponse = await _httpClient.GetFromJsonAsync<GetConfigurationResponse>(ApiUrl);
+        if (getConfigurationResponse == null)
+            throw new InvalidOperationException("Api returned empty body, instead of json object");
+
+        _schema = getConfigurationResponse.Schema;
+        _configurationObject = getConfigurationResponse.Configuration;
     }
 
 }

@@ -1,2 +1,38 @@
 ﻿@namespace ConfigurationUi.Ui.Components
+@using Newtonsoft.Json.Linq
 @inherits EditorComponentBase
+
+<MudNumericField T="int" @bind-Value="Token" Label="@Schema.Title">
+
+</MudNumericField>
+
+@code
+{
+    private int _value;
+
+    private int Value
+    {
+        get => _value;
+        set => SetValue(value);
+    }
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        if (Schema.Type is not JsonObjectType.Integer and not JsonObjectType.Number)
+            throw new ArgumentException("Invalid schema type for NumberEditor. " +
+                                         $"Expected Number or Integer, got {Schema.Type}");
+
+        if (Token.Type is not JTokenType.Integer and not JTokenType.Float)
+            throw new ArgumentException("NumberEditor is associated to value of wrong type. " + 
+                                        $"Expected Integer or Float, got {Schema.Type}");
+
+        _value = (int) Token;
+    }
+
+    private void SetValue(int value)
+    {
+        _value = value;
+        Token = _value;
+    }
+}
