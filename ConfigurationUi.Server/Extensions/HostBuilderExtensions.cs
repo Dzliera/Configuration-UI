@@ -13,11 +13,15 @@ namespace ConfigurationUi.Server.Extensions
     /// </summary>
     public static class HostBuilderExtensions
     {
-        public static IHostBuilder AddConfigurationUi(this IHostBuilder hostBuilder, string filePath, string configApiPath)
+        public static IHostBuilder AddConfigurationUi<TSchemaType>(this IHostBuilder hostBuilder, 
+            string filePath = "_data/configuration.json", 
+            string configApiPath = "/api/configuration-ui/configuration")
         {
 
             IFileProvider? configurationFileProvider = null;
 
+            CreateFileIfNotExists(filePath);
+            
             hostBuilder.ConfigureAppConfiguration((_, builder) =>
             {
                 configurationFileProvider = builder.GetFileProvider();
@@ -30,11 +34,25 @@ namespace ConfigurationUi.Server.Extensions
                 {
                     options.ConfigApiPath = configApiPath;
                     options.UseJsonFileStorage(filePath, configurationFileProvider!);
+                    options.UseSchemaFromType<TSchemaType>();
                 });
                 services.AddControllers().AddApplicationPart(typeof(ConfigurationController).Assembly);
             });
 
             return hostBuilder;
+        }
+
+        private static void CreateFileIfNotExists(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                var directoryPath = Path.GetDirectoryName(filePath);
+                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath ?? throw new ArgumentException());
+                var streamWriter = File.CreateText(filePath);
+                streamWriter.WriteLine("{}"); // write empty json object initially
+                streamWriter.Flush();
+                streamWriter.Close();
+            }
         }
     }
 }

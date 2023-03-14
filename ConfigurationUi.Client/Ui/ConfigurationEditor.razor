@@ -2,7 +2,7 @@
 @using System.Net.Http.Json
 @using ConfigurationUi.Models
 @using Newtonsoft.Json.Linq
-@inject HttpClient _httpClient;
+@inject HttpClient HttpClient;
 
 <MudCard>
     <MudCardHeader>Configuration Editor</MudCardHeader>
@@ -35,7 +35,7 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        var getConfigurationResponse = await _httpClient.GetFromJsonAsync<GetConfigurationResponse>(ApiUrl);
+        var getConfigurationResponse = await HttpClient.GetFromJsonAsync<GetConfigurationResponse>(ApiUrl);
         if (getConfigurationResponse == null)
             throw new InvalidOperationException("Api returned empty body, instead of json object");
 

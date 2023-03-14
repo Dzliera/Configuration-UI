@@ -12,6 +12,13 @@ namespace ConfigurationUi.Server.Options
 
         public string ConfigApiPath { get; set; } = null!;
 
+        
+        /// <summary>
+        /// Sets json file path, where configuration will be stored
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="fileProvider"></param>
+        /// <returns></returns>
         public ConfigurationUiServerOptions UseJsonFileStorage(string filePath, IFileProvider fileProvider)
         {
             StorageProvider = new JsonStorageProvider(filePath, fileProvider);
