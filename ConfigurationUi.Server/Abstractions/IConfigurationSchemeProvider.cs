@@ -1,17 +1,15 @@
 ﻿using NJsonSchema;
 
-namespace ConfigurationUi.Server.Abstractions
+namespace ConfigurationUi.Server.Abstractions;
+
+/// <summary>
+/// Configuration scheme provider
+/// </summary>
+public interface IConfigurationSchemeProvider
 {
     /// <summary>
-    /// Configuration scheme provider
+    /// Gets configuration scheme
     /// </summary>
-    public interface IConfigurationSchemeProvider
-    {
-        /// <summary>
-        /// Gets configuration scheme
-        /// </summary>
-        /// <returns></returns>
-        public JsonSchema4 GetConfigurationScheme();
-    }
-
+    /// <returns></returns>
+    public JsonSchema4 GetConfigurationScheme();
 }
