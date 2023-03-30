@@ -32,7 +32,6 @@ namespace ConfigurationUi.Ui
 
         private string _arrayEditorComponent;
         private string _arrayElementTemplate;
-        private string _dictionaryEditorComponent;
         private string _dictionaryElementTemplate;
 
         public UiBuilder()
@@ -63,9 +62,6 @@ namespace ConfigurationUi.Ui
 
             _arrayEditorComponent = ReadComponentTemplate("ArrayEditor");
             _arrayElementTemplate = ReadComponentTemplate("ArrayEditor", "ArrayElement");
-
-            _dictionaryEditorComponent = ReadComponentTemplate("DictionaryEditor");
-            _dictionaryElementTemplate = ReadComponentTemplate("DictionaryEditor", "DictionaryElement");
         }
 
 
@@ -98,10 +94,7 @@ namespace ConfigurationUi.Ui
             if (schema.Type.HasFlag(JsonObjectType.Boolean)) return BuildBooleanEditor(configuration);
             if (schema.Type.HasFlag(JsonObjectType.Number)) return BuildDecimalEditorHtml(configuration);
             if (schema.Type.HasFlag(JsonObjectType.Integer)) return BuildIntegerEditorHtml(configuration);
-
-
-            if (schema.IsDictionary) return BuildDictionaryEditorHtml(configuration, schema);
-
+            
             if (schema.IsObject) return BuildObjectEditorHtml(configuration, schema);
 
             if (schema.IsArray) return BuildArrayEditorHtml(configuration, schema);
@@ -159,31 +152,6 @@ namespace ConfigurationUi.Ui
             singleElementBuilder.Replace("{Item}", elemHtml.ToString())
                 .Replace("{Key}", arrayElemSection.Key);
             return singleElementBuilder;
-        }
-
-
-        private StringBuilder BuildDictionaryEditorHtml(IConfigurationSection configuration, JsonSchema4 schema)
-        {
-            var dictionaryBuilder = new StringBuilder(_dictionaryEditorComponent)
-                .Replace("{Title}", configuration.Key)
-                .Replace("{Key}", configuration.Key);
-
-            var elemSchema = schema.AdditionalPropertiesSchema;
-
-            var elemsBuilder = new StringBuilder();
-
-            foreach (var dictionaryElemSection in configuration.GetChildren())
-            {
-                var singleElementBuilder = BuildDictionaryElemHtml(dictionaryElemSection, elemSchema);
-                elemsBuilder.Append(singleElementBuilder);
-            }
-
-            dictionaryBuilder.Replace("{Items}", elemsBuilder.ToString());
-
-            var template = BuildArrayElemHtml(configuration.GetSection("$NULL"), elemSchema);
-            dictionaryBuilder.Replace("{Template}", template.ToString());
-
-            return dictionaryBuilder;
         }
 
         private StringBuilder BuildDictionaryElemHtml(IConfigurationSection dictionaryElemSection,
