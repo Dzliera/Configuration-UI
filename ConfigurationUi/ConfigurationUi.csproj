@@ -2,26 +2,26 @@
 
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
-        <Title>ConfigurationUi</Title>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <PackageId>OpSolutions.ConfigurationUi</PackageId>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <Title>ConfigurationUi</Title>
+        <PackageId>ConfigurationUi</PackageId>
         <Description>User-friendly web renderer and editor for asp.net configuration</Description>
         <Version>1.0.0-beta9</Version>
+        <Authors>Giorgi Chkhikvadze</Authors>
         <PackageTags>dotnetcore, aspnetcore, configuration</PackageTags>
-        <RepositoryUrl>https://github.com/OP-Solutions/Configuration-UI</RepositoryUrl>
-        <PackageIcon>PackageIcon.jpg</PackageIcon>
-        <Copyright>Copyright © Op Solutions LTD.</Copyright>
+        <RepositoryUrl>https://github.com/Dzliera/Configuration-UI</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <IsPackable>true</IsPackable>
-        <Authors>Giorgi Chkhikvadze</Authors>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>
         <None Include="../README.md" Pack="true" PackagePath="/" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="../.assets/PackageIcon.jpg" Pack="true" PackagePath="/" />
     </ItemGroup>
     
     <ItemGroup>
