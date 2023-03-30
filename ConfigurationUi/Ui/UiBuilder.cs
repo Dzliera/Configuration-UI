@@ -32,7 +32,6 @@ namespace ConfigurationUi.Ui
 
         private string _arrayEditorComponent;
         private string _arrayElementTemplate;
-        private string _dictionaryElementTemplate;
 
         public UiBuilder()
         {
@@ -151,16 +150,6 @@ namespace ConfigurationUi.Ui
             var elemHtml = GenerateHtmlRecursive(arrayElemSection, elemSchema);
             singleElementBuilder.Replace("{Item}", elemHtml.ToString())
                 .Replace("{Key}", arrayElemSection.Key);
-            return singleElementBuilder;
-        }
-
-        private StringBuilder BuildDictionaryElemHtml(IConfigurationSection dictionaryElemSection,
-            JsonSchema4 elemSchema)
-        {
-            var singleElementBuilder = new StringBuilder(_dictionaryElementTemplate);
-            var elemHtml = GenerateHtmlRecursive(dictionaryElemSection, elemSchema);
-            singleElementBuilder.Replace("{Item}", elemHtml.ToString())
-                .Replace("{Key}", dictionaryElemSection.Key);
             return singleElementBuilder;
         }
 
