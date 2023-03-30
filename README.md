@@ -1,6 +1,6 @@
 # ConfigurationUi
 
-[![NuGet Version](https://img.shields.io/nuget/v/ConfigurationUi.svg)](https://www.nuget.org/packages/ConfigurationUi)
+[![NuGet Version](https://img.shields.io/nuget/v/ConfigurationUi.svg?style=plastic)](https://www.nuget.org/packages/ConfigurationUi)
 
 ConfigurationUI is .Net library for managing **Asp.Net Core** configuration.    
 It can parse configuration schema from arbitrary .Net type and generate web-page for displaying/editing configuration in
