@@ -26,7 +26,9 @@ namespace ConfigurationUi.StorageProviders
             if (!fileInfo.Exists)
             {
                 var directoryPath = Path.GetDirectoryName(filePath);
-                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath ?? throw new ArgumentException());
+                if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath)) 
+                    Directory.CreateDirectory(directoryPath);
+                
                 var streamWriter = File.CreateText(fileInfo.PhysicalPath);
                 streamWriter.WriteLine("{}"); // write empty json object initially
                 streamWriter.Flush();
@@ -49,7 +51,7 @@ namespace ConfigurationUi.StorageProviders
 
         private JToken GetJTokenFromConfiguration(IConfiguration configuration, JsonSchema4 schema)
         {
-            if (schema.Type == JsonObjectType.Object)
+            if (schema.IsObject)
             {
                 var objectToken = new JObject();
                 foreach (var propertyConfig in configuration.GetChildren())
@@ -61,7 +63,7 @@ namespace ConfigurationUi.StorageProviders
                 return objectToken;
             }
             
-            if (schema.Type == JsonObjectType.Array)
+            if (schema.IsArray)
             {
                 var arrayToken = new JArray();
                 var elemSchema = schema.Item;
@@ -78,6 +80,7 @@ namespace ConfigurationUi.StorageProviders
 
             if (schema.HasReference) return GetJTokenFromConfiguration(configuration, schema.Reference);
 
+            // handle nullable property represented as OneOf Null | Value
             if (schema.OneOf.Count == 2 && schema.OneOf.First().Type == JsonObjectType.Null)
                 return GetJTokenFromConfiguration(configuration, schema.OneOf.Last());
 
