@@ -10,7 +10,7 @@
         <Title>ConfigurationUi</Title>
         <PackageId>ConfigurationUi</PackageId>
         <Description>User-friendly web renderer and editor for asp.net configuration</Description>
-        <Version>1.0.2</Version>
+        <Version>1.0.3</Version>
         <Authors>Giorgi Chkhikvadze</Authors>
         <PackageTags>dotnetcore, aspnetcore, configuration</PackageTags>
         <RepositoryUrl>https://github.com/Dzliera/Configuration-UI</RepositoryUrl>
@@ -36,9 +36,9 @@
     </ItemGroup>
     
     <ItemGroup>
-        <Content Include="Ui/**" Pack="true">
+        <None Include="Ui/**" Pack="true">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <PackageCopyToOutput>true</PackageCopyToOutput>
-        </Content>
+        </None>
     </ItemGroup>
 </Project>
