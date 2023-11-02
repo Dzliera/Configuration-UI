@@ -36,7 +36,7 @@
     </ItemGroup>
     
     <ItemGroup>
-        <None Include="Ui/**" Pack="true">
+        <None Include="Ui/Html/**" Pack="true">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <PackageCopyToOutput>true</PackageCopyToOutput>
         </None>
